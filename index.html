@@ -1765,6 +1765,23 @@ const THEME_CATEGORY = {
 
   let state = { nickname: "", category: null, spread: null };
   const root = document.getElementById("tarot-root");
+
+  // ============================================================
+  // iframe 자동 높이 조절 - 티스토리에 iframe으로 삽입했을 때
+  // 화면(시작/카테고리/결과 등)마다 높이가 크게 달라지므로,
+  // 내용이 바뀔 때마다 부모 페이지(티스토리)에 높이를 알려준다.
+  // ============================================================
+  function reportHeightToParent() {
+    const h = root.scrollHeight + 24; // 여유 패딩
+    window.parent.postMessage({ type: "tarot-resize", height: h }, "*");
+  }
+  if (window.ResizeObserver) {
+    new ResizeObserver(reportHeightToParent).observe(root);
+  } else {
+    // 구형 브라우저 대비: 주기적으로 확인
+    setInterval(reportHeightToParent, 500);
+  }
+  window.addEventListener("load", reportHeightToParent);
   // ★ 실제 배포 시 이 부분을 타로점이 올라간 실제 포스트 주소로 바꿔주세요
   const linkUrl = "tech-asset.tistory.com/74";
   const shareLinkUrl = "https://" + linkUrl;
