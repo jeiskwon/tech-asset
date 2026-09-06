@@ -2137,13 +2137,26 @@ const THEME_CATEGORY = {
     return picked;
   }
 
-  // 카드 + 방향 + 현재 선택된 카테고리를 조합해 해석을 만든다
+  // 카테고리별 마무리 한마디 (카테고리마다 다른 내용으로, 결과 길이를 짧게 유지)
+  const CATEGORY_CLOSING = {
+    love: "지금 이 감정의 흐름을 편하게 받아들이면서, 상대와의 거리를 조금씩 좁혀보는 하루가 되면 좋겠어요. 너무 서두르지 않아도 괜찮아요, 진심은 시간이 지나도 자연스럽게 전해지는 법이니 표현하는 데 조금 더 용기를 내보세요.",
+    wealth: "무리한 결정보다는 이 흐름에 맞춰 지출과 계획을 차근차근 점검해보는 게 좋겠어요. 작은 습관 하나가 나중엔 큰 차이를 만들어줄 수 있으니, 오늘은 돈의 흐름을 한 번 더 들여다보는 시간을 가져보세요.",
+    job: "이 기운을 업무나 목표를 향한 태도에 적용해보면 오늘 하루의 방향이 한결 선명해질 거예요. 조급해하지 말고 지금 할 수 있는 일부터 차근히 해나가면, 원하는 결과에 자연스럽게 가까워질 거예요.",
+    health: "몸과 마음이 보내는 신호에 귀 기울이며, 이 흐름에 맞는 생활 리듬을 찾아가 보세요. 무리하지 않는 선에서 스스로를 돌보는 것만으로도 컨디션이 한결 편안해질 거예요.",
+    today: "오늘 하루, 이 카드가 전하는 메시지를 마음 한켠에 담아두고 스스로를 돌아보는 시간을 가져보세요. 작은 변화 하나가 하루 전체의 분위기를 바꿔줄 수 있어요."
+  };
+
+  // 카드 + 방향 + 현재 선택된 카테고리를 조합해 해석을 만든다 (카테고리별로 실제로 다른 내용, 약 300자 내외)
   function getInterpretation(card, reversed) {
     const theme = reversed ? card.tr : card.tu;
     const general = reversed ? card.reversed : card.upright;
-    const detail = reversed ? card.reversedDetail : card.uprightDetail;
-    if (state.category === "today") return { general: general, detail: detail, extra: null };
-    const extra = (THEME_CATEGORY[theme] && THEME_CATEGORY[theme][state.category]) || null;
+    const keyword = reversed ? card.keywordR : card.keyword;
+    const cat = state.category;
+    const catLabel = CATEGORY_LABELS[cat] + (cat === "today" ? "" : "운");
+    const extra = cat !== "today" ? ((THEME_CATEGORY[theme] && THEME_CATEGORY[theme][cat]) || null) : null;
+    const opening = `오늘 ${catLabel}에서 이 카드가 강조하는 키워드는 '${keyword}'예요.`;
+    const closing = CATEGORY_CLOSING[cat] || CATEGORY_CLOSING.today;
+    const detail = `${opening} ${closing}`;
     return { general: general, detail: detail, extra: extra };
   }
 
