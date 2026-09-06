@@ -18,6 +18,21 @@
 <div id="tarot-root">&nbsp;</div>
 <div>
 <style>
+  /* ▼ ①번 CSS 코드를 <style> 바로 아래에 붙여넣습니다 ▼ */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 800px;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .container, .tarot-wrapper, .wrapper {
+    height: auto !important;
+    min-height: 800px;
+  }
+
+  /* 기존 스타일 시작 */
   #tarot-root {
     --purple: #6b5b95;
     --gold: #d4af37;
@@ -2243,3 +2258,31 @@ const THEME_CATEGORY = {
   renderStart();
 })();
 </script>
+<!-- ▼ 아래 코드를 맨 밑에 추가해 주세요 ▼ -->
+    <script>
+      function sendHeightToParent() {
+        var contentHeight = Math.max(
+          document.documentElement.scrollHeight,
+          document.body.scrollHeight,
+          document.documentElement.offsetHeight,
+          document.body.offsetHeight,
+          600
+        );
+        window.parent.postMessage({ type: 'resizeTarotIframe', height: contentHeight }, '*');
+      }
+
+      window.addEventListener('load', sendHeightToParent);
+      window.addEventListener('resize', sendHeightToParent);
+
+      if (window.ResizeObserver) {
+        var observer = new ResizeObserver(function() {
+          sendHeightToParent();
+        });
+        observer.observe(document.body);
+      }
+
+      setTimeout(sendHeightToParent, 300);
+      setTimeout(sendHeightToParent, 1000);
+    </script>
+  </body>
+</html>
