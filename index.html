@@ -174,6 +174,63 @@
     font-weight: 600;
   }
 
+  /* 카드 셔플/선택 화면 */
+  .tarot-select-stage {
+    text-align: center;
+    padding: 12px 0 8px;
+  }
+  .tarot-select-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 2px;
+  }
+  .tarot-select-hint {
+    font-size: 13px;
+    color: #8a7fa8;
+    margin-bottom: 18px;
+    min-height: 18px;
+  }
+  .tarot-deck {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    margin-bottom: 4px;
+  }
+  .tarot-deck-stack {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 72px;
+    height: 112px;
+    margin-left: -36px;
+    border-radius: 10px;
+    background: var(--purple);
+    opacity: 0.9;
+    z-index: 0;
+    transition: box-shadow 0.4s ease, opacity 0.4s ease;
+  }
+  .tarot-pick-card {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 72px;
+    height: 112px;
+    margin-left: -36px;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(107, 91, 149, 0.28);
+    cursor: pointer;
+    transition: transform 0.5s cubic-bezier(.22,.61,.36,1), opacity 0.4s ease;
+  }
+  .tarot-pick-progress {
+    font-size: 12.5px;
+    color: var(--purple);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
   /* 결과 화면 */
   .tarot-result-frame {
     position: relative;
@@ -1936,22 +1993,119 @@ const THEME_CATEGORY = {
   // 3. 셔플 애니메이션
   // ============================================================
   function renderShuffle() {
+    const needPicks = state.spread === "one" ? 1 : state.spread === "three" ? 3 : 10;
+    const DECK_SIZE = needPicks + 4; // 뽑을 장수보다 항상 여유있게 표시
+    const offsetStep = Math.min(28, 260 / DECK_SIZE); // 카드 많아져도 화면 밖으로 안 나가게
+    const STACK_LAYERS_MAX = 6; // 뒤에 쌓인 카드 더미 층수(연출용)
+    let pickedCount = 0;
+
     root.innerHTML = `
-      <div class="tarot-card tarot-loading">
-        <img src="${IMG.loading}" alt="셔플중" />
-        <p>카드를 섞고 있어요...</p>
+      <div class="tarot-card tarot-select-stage">
+        <div class="tarot-select-title">카드를 섞고 있어요</div>
+        <div class="tarot-select-hint" id="tarot-select-hint">잠시만 기다려주세요...</div>
+        <div class="tarot-deck" id="tarot-deck">
+          <div class="tarot-deck-stack" id="tarot-deck-stack"></div>
+        </div>
+        <div class="tarot-pick-progress" id="tarot-pick-progress"></div>
       </div>
     `;
-    setTimeout(() => {
-      if (state.spread === "one") {
-        const d = drawCards(1)[0];
-        renderResultOne(d.card, d.reversed);
-      } else if (state.spread === "three") {
-        renderResultMulti(drawCards(3), POSITIONS_3, "3장 스프레드");
-      } else {
-        renderResultMulti(drawCards(10), POSITIONS_10, "켈틱 크로스");
+
+    const deckEl = document.getElementById("tarot-deck");
+    const stackEl = document.getElementById("tarot-deck-stack");
+    const hintEl = document.getElementById("tarot-select-hint");
+    const progressEl = document.getElementById("tarot-pick-progress");
+    const cardEls = [];
+
+    function updateStack() {
+      const remainRatio = Math.max(0, (needPicks - pickedCount) / needPicks);
+      const layers = Math.ceil(STACK_LAYERS_MAX * remainRatio);
+      if (layers <= 0) {
+        stackEl.style.boxShadow = "none";
+        stackEl.style.opacity = "0";
+        return;
       }
-    }, 1500);
+      const shadows = [];
+      for (let i = 1; i <= layers; i++) {
+        shadows.push(`0 ${i * 3}px 0 -1px rgba(107, 91, 149, ${0.35 - i * 0.03})`);
+      }
+      stackEl.style.boxShadow = shadows.join(", ");
+      stackEl.style.opacity = "1";
+    }
+
+    for (let i = 0; i < DECK_SIZE; i++) {
+      const c = document.createElement("div");
+      c.className = "tarot-pick-card";
+      c.style.backgroundImage = `url('${IMG.back}')`;
+      deckEl.appendChild(c);
+      cardEls.push(c);
+    }
+    updateStack();
+
+    function layoutFan() {
+      const mid = (DECK_SIZE - 1) / 2;
+      cardEls.forEach((c, i) => {
+        const offset = i - mid;
+        c.style.transform = `translateX(${offset * offsetStep}px) rotate(${offset * 8}deg)`;
+        c.style.zIndex = 100 - Math.abs(offset);
+      });
+    }
+
+    function layoutShuffleFrame() {
+      cardEls.forEach((c) => {
+        const x = (Math.random() - 0.5) * 34;
+        const y = Math.random() * 8;
+        const rot = (Math.random() - 0.5) * 22;
+        c.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${rot}deg)`;
+      });
+    }
+
+    layoutFan();
+    let shuffleFrames = 0;
+    const shuffleTimer = setInterval(() => {
+      layoutShuffleFrame();
+      shuffleFrames++;
+      if (shuffleFrames >= 5) {
+        clearInterval(shuffleTimer);
+        layoutFan();
+        hintEl.textContent = needPicks === 1
+          ? "마음에 드는 카드를 한 장 골라 탭하세요"
+          : `마음에 드는 카드를 ${needPicks}장 골라 탭하세요`;
+        progressEl.textContent = needPicks > 1 ? `0 / ${needPicks}` : "";
+        cardEls.forEach((c) => {
+          c.addEventListener("click", onPick);
+        });
+      }
+    }, 260);
+
+    function onPick(e) {
+      const c = e.currentTarget;
+      c.removeEventListener("click", onPick);
+      c.style.pointerEvents = "none";
+      c.style.zIndex = 200;
+      c.style.transform += " translateY(-16px) scale(1.1)";
+      setTimeout(() => {
+        c.style.opacity = "0";
+      }, 150);
+
+      pickedCount++;
+      updateStack();
+      if (pickedCount < needPicks) {
+        progressEl.textContent = `${pickedCount} / ${needPicks}`;
+      } else {
+        hintEl.textContent = "카드를 확인하고 있어요...";
+        progressEl.textContent = "";
+        setTimeout(() => {
+          if (state.spread === "one") {
+            const d = drawCards(1)[0];
+            renderResultOne(d.card, d.reversed);
+          } else if (state.spread === "three") {
+            renderResultMulti(drawCards(3), POSITIONS_3, "3장 스프레드");
+          } else {
+            renderResultMulti(drawCards(10), POSITIONS_10, "켈틱 크로스");
+          }
+        }, 500);
+      }
+    }
   }
 
   // ============================================================
