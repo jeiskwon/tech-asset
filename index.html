@@ -1861,36 +1861,26 @@ const THEME_CATEGORY = {
   // ============================================================
   // 카카오톡 공유하기 (카카오링크) - 클립보드 복사 없이 바로 전송 화면으로 연결
   // ============================================================
+  // 카드 이미지가 webp라서 아이폰 카카오톡에서 미리보기 이미지가 안 뜨는 문제 방지용:
+  // wsrv.nl 이미지 프록시를 거쳐 jpg로 즉시 변환한 주소를 만들어준다. (원본 이미지 파일은 그대로 둬도 됨)
+  function toKakaoSafeImage(url) {
+    return "https://wsrv.nl/?url=" + encodeURIComponent(url) + "&output=jpg&w=800";
+  }
+
   function shareToKakao({ title, description, imageUrl }) {
-    const fallbackText = `${title}\n${description}\n\n너도 카드 뽑아봐 👉 ${shareLinkUrl}`;
-
-    //function showFallback() {
-      //navigator.clipboard?.writeText(fallbackText);
-     // alert(
-     //   "카카오톡 공유 화면이 열리지 않았어요.\n" +
-      //  "대신 문구가 복사됐으니 카카오톡에 직접 붙여넣어주세요.\n\n" +
-      //  "티스토리 앱 안에서는 카카오 공유가 막히는 경우가 있어요. " +
-      //  "우측 상단 메뉴(⋮)에서 '다른 브라우저로 열기'를 선택하면 정상 작동해요."
-     // );
-   // }
-
     if (!window.Kakao || !Kakao.isInitialized()) {
-      showFallback();
+      // SDK 로드 실패 시 최소한의 대체 동작 (클립보드 복사)
+      const fallbackText = `${title}\n${description}\n\n너도 카드 뽑아봐 👉 ${shareLinkUrl}`;
+      navigator.clipboard?.writeText(fallbackText);
+      alert("카카오 공유 기능을 불러오지 못했어요.\n대신 문구가 복사됐으니 카카오톡에 붙여넣어주세요.");
       return;
     }
-
-    // 카카오톡 앱/공유창으로 실제로 전환됐는지 확인 후, 안 됐으면 자동으로 대체 안내
-    let switchedAway = false;
-    const markSwitched = () => { switchedAway = true; };
-    document.addEventListener("visibilitychange", markSwitched, { once: true });
-    window.addEventListener("pagehide", markSwitched, { once: true });
-
     Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
         title: title,
         description: description,
-        imageUrl: imageUrl,
+        imageUrl: toKakaoSafeImage(imageUrl),
         link: { mobileWebUrl: shareLinkUrl, webUrl: shareLinkUrl }
       },
       buttons: [
@@ -1900,14 +1890,6 @@ const THEME_CATEGORY = {
         }
       ]
     });
-
-    setTimeout(() => {
-      document.removeEventListener("visibilitychange", markSwitched);
-      window.removeEventListener("pagehide", markSwitched);
-      if (!switchedAway) {
-        showFallback();
-      }
-    }, 1200);
   }
 
   // 3장/켈틱크로스처럼 카드가 여러 장일 때, 카톡 카드에 넣을 대표 카드(이미지)를 고른다.
