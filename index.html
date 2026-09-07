@@ -1864,15 +1864,15 @@ const THEME_CATEGORY = {
   function shareToKakao({ title, description, imageUrl }) {
     const fallbackText = `${title}\n${description}\n\n너도 카드 뽑아봐 👉 ${shareLinkUrl}`;
 
-    function showFallback() {
-      navigator.clipboard?.writeText(fallbackText);
-      alert(
-        "카카오톡 공유 화면이 열리지 않았어요.\n" +
-        "대신 문구가 복사됐으니 카카오톡에 직접 붙여넣어주세요.\n\n" +
-        "티스토리 앱 안에서는 카카오 공유가 막히는 경우가 있어요. " +
-        "우측 상단 메뉴(⋮)에서 '다른 브라우저로 열기'를 선택하면 정상 작동해요."
-      );
-    }
+    //function showFallback() {
+      //navigator.clipboard?.writeText(fallbackText);
+     // alert(
+     //   "카카오톡 공유 화면이 열리지 않았어요.\n" +
+      //  "대신 문구가 복사됐으니 카카오톡에 직접 붙여넣어주세요.\n\n" +
+      //  "티스토리 앱 안에서는 카카오 공유가 막히는 경우가 있어요. " +
+      //  "우측 상단 메뉴(⋮)에서 '다른 브라우저로 열기'를 선택하면 정상 작동해요."
+     // );
+   // }
 
     if (!window.Kakao || !Kakao.isInitialized()) {
       showFallback();
