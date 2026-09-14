@@ -1,11 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타로 카드점</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+</style>
+</head>
+<body>
 <!-- ============================================================
-  타로 카드점 - 티스토리 HTML 모드에 통째로 붙여넣으세요
+  타로 카드점 - GitHub Pages에 올려 티스토리에서 iframe으로 불러옵니다
   ============================================================
   ★ 78장 + 뒷면 + UI 아이콘 이미지 URL(imgBB) 전부 반영 완료 (신규 91종) ★
   ★ 나BTI 리소스 재사용 3종(공유아이콘/다시하기아이콘/배경패턴)도 반영 완료 ★
 
-  결과 공유 문구에 들어가는 블로그 링크는 임시로 tech-asset.tistory.com
-  루트 주소를 넣어뒀으니, 이 타로점을 올릴 실제 포스트 주소로 바꿔주세요.
+  결과 공유 문구에 들어가는 블로그 링크는 실제 포스트 주소로 맞춰뒀습니다.
   (코드 안에서 "linkUrl" 변수를 찾으시면 돼요)
 ============================================================ -->
 <!-- 카카오톡 공유하기(카카오링크) SDK -->
@@ -16,7 +30,6 @@
   }
 </script>
 <div id="tarot-root">&nbsp;</div>
-<div>
 <style>
   /* ▼ ①번 CSS 코드를 <style> 바로 아래에 붙여넣습니다 ▼ */
   html, body {
@@ -434,8 +447,15 @@
   .tarot-btn-outline img { width: 18px; height: 18px; }
 
   .tarot-hidden { display: none !important; }
+
+  .tarot-shared-tag {
+    text-align: center;
+    font-size: 13px;
+    color: var(--purple);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
 </style>
-</div>
 <script>
 const CARDS = [
   {
@@ -1838,25 +1858,68 @@ const THEME_CATEGORY = {
   let state = { nickname: "", category: null, spread: null };
   const root = document.getElementById("tarot-root");
 
-  // ============================================================
-  // iframe 자동 높이 조절 - 티스토리에 iframe으로 삽입했을 때
-  // 화면(시작/카테고리/결과 등)마다 높이가 크게 달라지므로,
-  // 내용이 바뀔 때마다 부모 페이지(티스토리)에 높이를 알려준다.
-  // ============================================================
-  function reportHeightToParent() {
-    const h = root.scrollHeight + 24; // 여유 패딩
-    window.parent.postMessage({ type: "tarot-resize", height: h }, "*");
-  }
-  if (window.ResizeObserver) {
-    new ResizeObserver(reportHeightToParent).observe(root);
-  } else {
-    // 구형 브라우저 대비: 주기적으로 확인
-    setInterval(reportHeightToParent, 500);
-  }
-  window.addEventListener("load", reportHeightToParent);
-  // ★ 실제 배포 시 이 부분을 타로점이 올라간 실제 포스트 주소로 바꿔주세요
+  // (참고) iframe 높이 자동 조절은 파일 맨 아래 resizeTarotIframe 스크립트가 전담합니다.
   const linkUrl = "tech-asset.tistory.com/74";
   const shareLinkUrl = "https://" + linkUrl;
+
+  // 사용자 입력(닉네임 등)을 화면에 그대로 꽂아 넣기 전에 이스케이프 처리 (XSS 방지)
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // 스프레드별로 필요한 카드 장수 / 자리 정보 / 결과 제목을 한 곳에 모아둔다.
+  // (새로 카드를 뽑을 때도, 공유 링크로 들어온 결과를 복원할 때도 이 정보를 함께 사용한다)
+  const SPREAD_INFO = {
+    one: { count: 1 },
+    three: { count: 3, positions: POSITIONS_3, title: "3장 스프레드" },
+    celtic: { count: 10, positions: POSITIONS_10, title: "켈틱 크로스" }
+  };
+
+  // 닉네임 + 카테고리 + 스프레드 + 뽑힌 카드들을 URL 파라미터로 압축해서
+  // "결과가 곧바로 보이는" 공유 링크를 만든다.
+  // 카드 한 장당 "카드id + 정/역방향(u/r)"로 표시하고 "-"로 이어붙인다. (예: 00u-C05r-P14u)
+  function buildResultUrl(nickname, category, spread, draws) {
+    const params = new URLSearchParams();
+    params.set("c", category);
+    params.set("sp", spread);
+    params.set("d", draws.map(d => d.card.id + (d.reversed ? "r" : "u")).join("-"));
+    params.set("n", nickname);
+    return shareLinkUrl + "?" + params.toString();
+  }
+
+  // 페이지 로드시 URL에 공유 파라미터가 있으면 그 값으로 결과를 복원한다. 없으면 null.
+  function parseSharedResult() {
+    const params = new URLSearchParams(window.location.search);
+    if (!["c", "sp", "d", "n"].every(k => params.has(k))) return null;
+
+    const category = params.get("c");
+    if (!CATEGORIES.some(cat => cat.id === category)) return null;
+
+    const spread = params.get("sp");
+    const spreadInfo = SPREAD_INFO[spread];
+    if (!spreadInfo) return null;
+
+    const tokens = params.get("d").split("-");
+    if (tokens.length !== spreadInfo.count) return null;
+
+    const draws = [];
+    for (const tok of tokens) {
+      const orientationChar = tok.slice(-1);
+      const cardId = tok.slice(0, -1);
+      if (orientationChar !== "u" && orientationChar !== "r") return null;
+      const card = CARDS.find(c => c.id === cardId);
+      if (!card) return null;
+      draws.push({ card: card, reversed: orientationChar === "r" });
+    }
+
+    const nickname = escapeHtml((params.get("n") || "친구").slice(0, 10));
+    return { nickname, category, spread, draws };
+  }
 
   // ============================================================
   // 카카오톡 공유하기 (카카오링크) - 클립보드 복사 없이 바로 전송 화면으로 연결
@@ -1867,29 +1930,39 @@ const THEME_CATEGORY = {
     return "https://wsrv.nl/?url=" + encodeURIComponent(url) + "&output=jpg&w=800";
   }
 
-  function shareToKakao({ title, description, imageUrl }) {
+  function shareToKakao({ title, description, imageUrl, link }) {
+    // 카드 본문과 하단 버튼을 모두 "친구 결과보기" 링크로 통일한다.
+    // (버튼만 시작화면으로 보내면, 사람들이 카드 대신 버튼을 눌러서
+    //  결과 화면을 아예 못 보고 바로 새 테스트 화면으로 가버리는 문제가 있었음)
+    const targetLink = link || shareLinkUrl;
     if (!window.Kakao || !Kakao.isInitialized()) {
       // SDK 로드 실패 시 최소한의 대체 동작 (클립보드 복사)
-      const fallbackText = `${title}\n${description}\n\n너도 카드 뽑아봐 👉 ${shareLinkUrl}`;
+      const fallbackText = `${title}\n${description}\n\n결과 보고 너도 카드 뽑아봐 👉 ${targetLink}`;
       navigator.clipboard?.writeText(fallbackText);
       alert("카카오 공유 기능을 불러오지 못했어요.\n대신 문구가 복사됐으니 카카오톡에 붙여넣어주세요.");
       return;
     }
-    Kakao.Share.sendDefault({
-      objectType: "feed",
-      content: {
-        title: title,
-        description: description,
-        imageUrl: toKakaoSafeImage(imageUrl),
-        link: { mobileWebUrl: shareLinkUrl, webUrl: shareLinkUrl }
-      },
-      buttons: [
-        {
-          title: "나도 카드 뽑아보기",
-          link: { mobileWebUrl: shareLinkUrl, webUrl: shareLinkUrl }
-        }
-      ]
-    });
+    try {
+      Kakao.Share.sendDefault({
+        objectType: "feed",
+        content: {
+          title: title,
+          description: description,
+          imageUrl: toKakaoSafeImage(imageUrl),
+          link: { mobileWebUrl: targetLink, webUrl: targetLink }
+        },
+        buttons: [
+          {
+            title: "결과 보러가기",
+            link: { mobileWebUrl: targetLink, webUrl: targetLink }
+          }
+        ]
+      });
+    } catch (err) {
+      const fallbackText = `${title}\n${description}\n\n결과 보고 너도 카드 뽑아봐 👉 ${targetLink}`;
+      navigator.clipboard?.writeText(fallbackText);
+      alert("카카오 공유창을 여는 데 실패했어요.\n대신 문구가 복사됐으니 카카오톡에 붙여넣어주세요.");
+    }
   }
 
   // 3장/켈틱크로스처럼 카드가 여러 장일 때, 카톡 카드에 넣을 대표 카드(이미지)를 고른다.
@@ -1927,7 +2000,7 @@ const THEME_CATEGORY = {
     const nicknameInput = document.getElementById("tarot-nickname-input");
     document.getElementById("tarot-start-btn").onclick = () => {
       resetState();
-      state.nickname = nicknameInput.value.trim() || "당신";
+      state.nickname = escapeHtml(nicknameInput.value.trim() || "당신");
       renderCategory();
     };
     nicknameInput.addEventListener("keydown", (e) => {
@@ -2156,10 +2229,22 @@ const THEME_CATEGORY = {
   // ============================================================
   // 5-1. 결과 - 1장 뽑기
   // ============================================================
-  function renderResultOne(card, reversed) {
+  function renderResultOne(card, reversed, isShared) {
     const { general, detail, extra } = getInterpretation(card, reversed);
     const orientationLabel = reversed ? "역방향" : "정방향";
     const catLabel = CATEGORY_LABELS[state.category];
+
+    const bottomHtml = isShared ? `
+      <div class="tarot-shared-tag">👀 ${state.nickname}님이 공유한 결과예요</div>
+      <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">카드 뽑으러 가기 ✨</button>
+    ` : `
+      <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">
+        <img src="${IMG.refreshIcon}" alt="" style="width:20px;height:20px;" /> 다시 뽑기
+      </button>
+      <button class="tarot-btn-outline" id="tarot-share-btn" style="width:100%;">
+        <img src="${IMG.shareIcon}" alt="" /> 결과 공유하기
+      </button>
+    `;
 
     root.innerHTML = `
       <div class="tarot-card" style="background: linear-gradient(160deg, #6b5b9522, #ffffff);">
@@ -2182,29 +2267,40 @@ const THEME_CATEGORY = {
           ${extra ? `<div class="tarot-interp-extra"><b>[${catLabel}]</b> ${extra}</div>` : ''}
         </div>
 
-        <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">
-          <img src="${IMG.refreshIcon}" alt="" style="width:20px;height:20px;" /> 다시 뽑기
-        </button>
-        <button class="tarot-btn-outline" id="tarot-share-btn" style="width:100%;">
-          <img src="${IMG.shareIcon}" alt="" /> 결과 공유하기
-        </button>
+        ${bottomHtml}
       </div>
     `;
 
-    document.getElementById("tarot-retry-btn").onclick = () => renderCategory();
-    document.getElementById("tarot-share-btn").onclick = () => {
-      shareToKakao({
-        title: `${state.nickname}님의 ${catLabel} 카드는 [${card.name}] ${orientationLabel}`,
-        description: `${general}${extra ? " " + extra : ""}`,
-        imageUrl: card.img
-      });
+    document.getElementById("tarot-retry-btn").onclick = () => {
+      if (isShared) {
+        resetState();
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        renderStart();
+      } else {
+        renderCategory();
+      }
     };
+
+    const shareBtn = document.getElementById("tarot-share-btn");
+    if (shareBtn) {
+      shareBtn.onclick = () => {
+        const resultUrl = buildResultUrl(state.nickname, state.category, state.spread, [{ card, reversed }]);
+        shareToKakao({
+          title: `${state.nickname}님의 ${catLabel} 카드는 [${card.name}] ${orientationLabel}`,
+          description: `${general}${extra ? " " + extra : ""}`,
+          imageUrl: card.img,
+          link: resultUrl
+        });
+      };
+    }
   }
 
   // ============================================================
   // 5-2. 결과 - 3장 스프레드 / 켈틱 크로스 (공통)
   // ============================================================
-  function renderResultMulti(draws, positions, spreadTitle) {
+  function renderResultMulti(draws, positions, spreadTitle, isShared) {
     const catLabel = CATEGORY_LABELS[state.category];
 
     const blocksHtml = draws.map((d, i) => {
@@ -2235,33 +2331,69 @@ const THEME_CATEGORY = {
       `;
     }).join("");
 
+    const bottomHtml = isShared ? `
+      <div class="tarot-shared-tag">👀 ${state.nickname}님이 공유한 결과예요</div>
+      <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">카드 뽑으러 가기 ✨</button>
+    ` : `
+      <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">
+        <img src="${IMG.refreshIcon}" alt="" style="width:20px;height:20px;" /> 다시 뽑기
+      </button>
+      <button class="tarot-btn-outline" id="tarot-share-btn" style="width:100%;">
+        <img src="${IMG.shareIcon}" alt="" /> 결과 공유하기
+      </button>
+    `;
+
     root.innerHTML = `
       <div class="tarot-card" style="background: linear-gradient(160deg, #6b5b9522, #ffffff);">
         <div class="tarot-title">🔮 ${spreadTitle} 결과</div>
         <div class="tarot-sub">${state.nickname}님을 위한 ${catLabel} 리딩이에요</div>
         ${blocksHtml}
-        <button class="tarot-btn tarot-btn-full" id="tarot-retry-btn">
-          <img src="${IMG.refreshIcon}" alt="" style="width:20px;height:20px;" /> 다시 뽑기
-        </button>
-        <button class="tarot-btn-outline" id="tarot-share-btn" style="width:100%;">
-          <img src="${IMG.shareIcon}" alt="" /> 결과 공유하기
-        </button>
+        ${bottomHtml}
       </div>
     `;
 
-    document.getElementById("tarot-retry-btn").onclick = () => renderCategory();
-    document.getElementById("tarot-share-btn").onclick = () => {
-      const repIdx = getRepresentativeIndex(positions);
-      const rep = draws[repIdx];
-      shareToKakao({
-        title: `${state.nickname}님의 ${catLabel} ${spreadTitle} 결과`,
-        description: `${buildMultiSummaryText(draws, positions)} · 전체 해석은 아래에서 확인하세요!`,
-        imageUrl: rep.card.img
-      });
+    document.getElementById("tarot-retry-btn").onclick = () => {
+      if (isShared) {
+        resetState();
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        renderStart();
+      } else {
+        renderCategory();
+      }
     };
+
+    const shareBtn = document.getElementById("tarot-share-btn");
+    if (shareBtn) {
+      shareBtn.onclick = () => {
+        const resultUrl = buildResultUrl(state.nickname, state.category, state.spread, draws);
+        const repIdx = getRepresentativeIndex(positions);
+        const rep = draws[repIdx];
+        shareToKakao({
+          title: `${state.nickname}님의 ${catLabel} ${spreadTitle} 결과`,
+          description: `${buildMultiSummaryText(draws, positions)} · 전체 해석은 아래에서 확인하세요!`,
+          imageUrl: rep.card.img,
+          link: resultUrl
+        });
+      };
+    }
   }
 
-  renderStart();
+  const sharedResult = parseSharedResult();
+  if (sharedResult) {
+    state.nickname = sharedResult.nickname;
+    state.category = sharedResult.category;
+    state.spread = sharedResult.spread;
+    if (sharedResult.spread === "one") {
+      renderResultOne(sharedResult.draws[0].card, sharedResult.draws[0].reversed, true);
+    } else {
+      const info = SPREAD_INFO[sharedResult.spread];
+      renderResultMulti(sharedResult.draws, info.positions, info.title, true);
+    }
+  } else {
+    renderStart();
+  }
 })();
 </script>
 <!-- ▼ 아래 코드를 맨 밑에 추가해 주세요 ▼ -->
