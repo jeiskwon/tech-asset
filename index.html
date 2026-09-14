@@ -2398,29 +2398,50 @@ const THEME_CATEGORY = {
 </script>
 <!-- ▼ 아래 코드를 맨 밑에 추가해 주세요 ▼ -->
     <script>
-      function sendHeightToParent() {
-        var contentHeight = Math.max(
+      function computeContentHeight() {
+        return Math.max(
           document.documentElement.scrollHeight,
           document.body.scrollHeight,
           document.documentElement.offsetHeight,
           document.body.offsetHeight,
           600
         );
-        window.parent.postMessage({ type: 'resizeTarotIframe', height: contentHeight }, '*');
       }
 
-      window.addEventListener('load', sendHeightToParent);
-      window.addEventListener('resize', sendHeightToParent);
+      function sendHeightToParent() {
+        window.parent.postMessage({ type: 'resizeTarotIframe', height: computeContentHeight() }, '*');
+      }
+
+      // 화면이 바뀔 때(카드 뽑기 → 결과 → 다시 뽑기 등) 높이를 여러 번 다시 재서 보낸다.
+      // 한 번만 재면 카드 이미지 로딩 등으로 실제 레이아웃이 늦게 확정되는 경우
+      // (특히 긴 켈틱크로스 결과 → 짧은 화면으로 돌아갈 때) iframe이 큰 채로 남아
+      // 프레임 아래에 빈 여백이 생기는 문제가 있었다.
+      let heightSyncTimers = [];
+      function scheduleHeightSync() {
+        heightSyncTimers.forEach(clearTimeout);
+        heightSyncTimers = [];
+        sendHeightToParent();
+        [50, 150, 400, 900].forEach(delay => {
+          heightSyncTimers.push(setTimeout(sendHeightToParent, delay));
+        });
+      }
+
+      window.addEventListener('load', scheduleHeightSync);
+      window.addEventListener('resize', scheduleHeightSync);
+
+      // 화면 전환(각 render 함수의 root.innerHTML 교체)마다 자동으로 감지해서 재동기화
+      if (window.MutationObserver) {
+        var tarotRootEl = document.getElementById('tarot-root');
+        var mo = new MutationObserver(scheduleHeightSync);
+        mo.observe(tarotRootEl || document.body, { childList: true, subtree: true });
+      }
 
       if (window.ResizeObserver) {
-        var observer = new ResizeObserver(function() {
-          sendHeightToParent();
-        });
+        var observer = new ResizeObserver(scheduleHeightSync);
         observer.observe(document.body);
       }
 
-      setTimeout(sendHeightToParent, 300);
-      setTimeout(sendHeightToParent, 1000);
+      scheduleHeightSync();
     </script>
   </body>
 </html>
