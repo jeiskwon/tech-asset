@@ -28,6 +28,7 @@
 <script>
 (function(){
   const TISTORY='https://tech-asset.tistory.com/pages/PLAYZIP';
+  const INSTALLER='https://jeiskwon.github.io/tech-asset/playzip-install/';
   const ua=navigator.userAgent||'';
   const isIOS=/iPhone|iPad|iPod/i.test(ua);
   const isAndroid=/Android/i.test(ua);
@@ -36,6 +37,7 @@
   const isChrome=/Chrome|CriOS/i.test(ua)&&!isSamsung;
   const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
   const installBtn=document.getElementById('installBtn');
+  const openBtn=document.getElementById('openBtn');
   const status=document.getElementById('status');
   const guide=document.getElementById('guide');
   let deferredPrompt=null;
@@ -43,6 +45,11 @@
   if(standalone){
     location.replace(TISTORY);
     return;
+  }
+
+  if(isKakao&&isAndroid){
+    openBtn.textContent='Chrome에서 설치 페이지 열기';
+    openBtn.href='intent://jeiskwon.github.io/tech-asset/playzip-install/#Intent;scheme=https;package=com.android.chrome;end';
   }
 
   if('serviceWorker' in navigator){
@@ -78,7 +85,7 @@
 
     if(isKakao&&isAndroid){
       setStatus('카카오톡 안에서는 설치창을 직접 띄울 수 없습니다.');
-      showGuide('<b>Android 카카오톡</b><br>1. 오른쪽 위 메뉴를 누릅니다.<br>2. <b>다른 브라우저로 열기</b> 또는 <b>Chrome에서 열기</b>를 선택합니다.<br>3. Chrome에서 이 페이지의 <b>PLAYZIP 홈 화면에 추가</b> 버튼을 다시 누르세요.');
+      showGuide('<b>Android 카카오톡</b><br>아래의 <b>Chrome에서 설치 페이지 열기</b>를 누른 뒤, Chrome에서 다시 <b>PLAYZIP 홈 화면에 추가</b>를 누르세요.<br><br>Chrome 버튼이 열리지 않으면 카카오톡 오른쪽 위 메뉴 → <b>다른 브라우저로 열기</b>를 선택하세요.');
       return;
     }
 
@@ -101,7 +108,7 @@
     }
 
     if(isAndroid&&isChrome){
-      setStatus('Chrome이 아직 자동 설치 버튼을 허용하지 않았습니다. 메뉴에서 추가할 수 있습니다.');
+      setStatus('Chrome이 자동 설치 버튼을 아직 허용하지 않았습니다. 메뉴에서 추가할 수 있습니다.');
       showGuide('<b>Android Chrome</b><br>1. 오른쪽 위 <b>⋮ 메뉴</b>를 누릅니다.<br>2. <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누릅니다.<br>3. <b>설치/추가</b>를 선택하세요.');
       return;
     }
@@ -112,7 +119,8 @@
 
   setTimeout(()=>{
     if(deferredPrompt)return;
-    if(isKakao)setStatus('카카오톡에서는 외부 브라우저로 연 뒤 설치해야 합니다.');
+    if(isKakao&&isAndroid)setStatus('먼저 Chrome으로 설치 페이지를 열어주세요.');
+    else if(isKakao)setStatus('카카오톡에서는 외부 브라우저로 연 뒤 설치해야 합니다.');
     else if(isIOS)setStatus('Safari의 공유 메뉴에서 홈 화면에 추가할 수 있습니다.');
     else if(isSamsung)setStatus('삼성 인터넷 메뉴에서 홈 화면에 추가할 수 있습니다.');
     else if(isAndroid)setStatus('설치 버튼이 활성화되면 바로 설치할 수 있습니다. 안 뜨면 브라우저 메뉴를 사용하세요.');
