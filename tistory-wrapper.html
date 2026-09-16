@@ -17,118 +17,54 @@
   const BASE='https://jeiskwon.github.io/tech-asset/index.html';
   const MIN_HEIGHT=760;
   const MAX_HEIGHT=12000;
-  let lastHeight=0;
-  let timer=null;
-  let ro=null;
-  let mo=null;
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
+  let lastHeight=0,timer=null,ro=null,mo=null;
 
-  function appUrl(){
-    return BASE+(window.location.search||'');
-  }
-
+  function appUrl(){return BASE+(window.location.search||'');}
   function postHeight(h){
     const next=Math.max(MIN_HEIGHT,Math.min(MAX_HEIGHT,Math.ceil(h)));
     if(Math.abs(next-lastHeight)<3)return;
-    lastHeight=next;
-    frame.style.height=next+'px';
+    lastHeight=next;frame.style.height=next+'px';
     window.parent.postMessage({type:'resizeTarotIframeV2',height:next},'*');
   }
-
   function injectPlayzipOnResult(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
       const root=doc.getElementById('tarot-root');
       if(!root)return;
-
       const isResult=!!root.querySelector('.tarot-result-frame, .tarot-pos-block');
-      if(!isResult)return;
-      if(root.querySelector('#playzip-tarot-result'))return;
-
-      const card=root.querySelector('.tarot-card');
-      if(!card)return;
-
+      if(!isResult||root.querySelector('#playzip-tarot-result'))return;
+      const card=root.querySelector('.tarot-card');if(!card)return;
+      const installLink=isMobile?`<a href="https://tech-asset.tistory.com/pages/PLAYZIP#install" target="_top" style="display:block;text-decoration:none;border:1px solid #ddd2f1;background:#fff;color:#675591;padding:11px 14px;border-radius:14px;font-weight:700;">📱 다음에도 바로 오도록 홈 화면에 추가</a>`:'';
       const box=doc.createElement('div');
       box.id='playzip-tarot-result';
       box.style.cssText='margin-top:18px;padding:17px 15px;border:1px solid #e3d9f3;border-radius:18px;background:linear-gradient(145deg,#fff,#faf6ff);text-align:center;';
-      box.innerHTML=`
-        <div style="font-size:17px;font-weight:800;color:#3f3560;margin-bottom:5px;">다른 것도 해볼까요?</div>
-        <div style="font-size:12.5px;line-height:1.6;color:#8a7fa8;margin-bottom:12px;">사주 · 타로 · 나BTI를 PLAYZIP에서 골라 즐겨보세요.</div>
-        <a href="https://tech-asset.tistory.com/pages/PLAYZIP" target="_top"
-           style="display:block;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-weight:800;margin-bottom:8px;">
-          PLAYZIP에서 다른 콘텐츠 보기 →
-        </a>
-        <a href="https://tech-asset.tistory.com/pages/PLAYZIP#install" target="_top"
-           style="display:block;text-decoration:none;border:1px solid #ddd2f1;background:#fff;color:#675591;padding:11px 14px;border-radius:14px;font-weight:700;">
-          📱 다음에도 바로 오도록 홈 화면에 추가
-        </a>`;
-      card.appendChild(box);
-      scheduleMeasure();
+      box.innerHTML=`<div style="font-size:17px;font-weight:800;color:#3f3560;margin-bottom:5px;">다른 것도 해볼까요?</div><div style="font-size:12.5px;line-height:1.6;color:#8a7fa8;margin-bottom:12px;">사주 · 타로 · 나BTI를 PLAYZIP에서 골라 즐겨보세요.</div><a href="https://tech-asset.tistory.com/pages/PLAYZIP" target="_top" style="display:block;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-weight:800;${isMobile?'margin-bottom:8px;':''}">PLAYZIP에서 다른 콘텐츠 보기 →</a>${installLink}`;
+      card.appendChild(box);scheduleMeasure();
     }catch(e){}
   }
-
   function measure(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
-      if(!doc)return;
-      const root=doc.getElementById('tarot-root');
-      if(!root)return;
-      const rect=root.getBoundingClientRect();
-      const cs=doc.defaultView.getComputedStyle(root);
-      const mt=parseFloat(cs.marginTop)||0;
-      const mb=parseFloat(cs.marginBottom)||0;
-      // body/html의 min-height나 부모가 준 iframe 높이는 보지 않고,
-      // 실제 tarot-root 콘텐츠 높이만 기준으로 계산한다.
-      const contentHeight=Math.max(root.scrollHeight,rect.height)+mt+mb+12;
-      postHeight(contentHeight);
-    }catch(e){
-      // same-origin 상태에서만 측정 가능. 실패 시 기존 높이 유지.
-    }
+      const root=doc.getElementById('tarot-root');if(!root)return;
+      const rect=root.getBoundingClientRect(),cs=doc.defaultView.getComputedStyle(root);
+      const mt=parseFloat(cs.marginTop)||0,mb=parseFloat(cs.marginBottom)||0;
+      postHeight(Math.max(root.scrollHeight,rect.height)+mt+mb+12);
+    }catch(e){}
   }
-
-  function scheduleMeasure(){
-    clearTimeout(timer);
-    timer=setTimeout(function(){
-      injectPlayzipOnResult();
-      measure();
-    },60);
-  }
-
+  function scheduleMeasure(){clearTimeout(timer);timer=setTimeout(function(){injectPlayzipOnResult();measure();},60);}
   function attachObservers(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
-      const root=doc.getElementById('tarot-root');
-      if(!root)return;
-
-      if(ro)ro.disconnect();
-      if(mo)mo.disconnect();
-
-      ro=new ResizeObserver(scheduleMeasure);
-      ro.observe(root);
-
-      mo=new MutationObserver(scheduleMeasure);
-      mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
-
-      doc.querySelectorAll('img').forEach(img=>{
-        if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true});
-      });
+      const root=doc.getElementById('tarot-root');if(!root)return;
+      if(ro)ro.disconnect();if(mo)mo.disconnect();
+      ro=new ResizeObserver(scheduleMeasure);ro.observe(root);
+      mo=new MutationObserver(scheduleMeasure);mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
+      doc.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true});});
     }catch(e){}
   }
-
-  frame.addEventListener('load',function(){
-    attachObservers();
-    injectPlayzipOnResult();
-    measure();
-    [120,350,800,1500].forEach(ms=>setTimeout(function(){injectPlayzipOnResult();measure();},ms));
-  });
-
-  // 안쪽 index.html이 보내는 구형 높이 메시지는 wrapper에서 소비하고
-  // Tistory 부모로 그대로 전달하지 않는다.
-  window.addEventListener('message',function(e){
-    if(e.source===frame.contentWindow){
-      scheduleMeasure();
-    }
-  });
-
+  frame.addEventListener('load',function(){attachObservers();injectPlayzipOnResult();measure();[120,350,800,1500].forEach(ms=>setTimeout(function(){injectPlayzipOnResult();measure();},ms));});
+  window.addEventListener('message',function(e){if(e.source===frame.contentWindow)scheduleMeasure();});
   frame.src=appUrl();
 })();
 </script>
