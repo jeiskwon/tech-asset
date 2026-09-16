@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PLAYZIP 바로가기 설치</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="../playzip/playzip-icon-180.png">
+<meta name="theme-color" content="#7b61d1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PLAYZIP">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:linear-gradient(180deg,#f5efff,#fff7fb);color:#40364d;min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(440px,100%);background:#fff;border:1px solid #eadff5;border-radius:28px;padding:26px 22px;box-shadow:0 18px 50px rgba(103,75,145,.14);text-align:center}.icon{width:104px;height:104px;border-radius:24px;box-shadow:0 10px 24px rgba(105,80,150,.16);margin-bottom:14px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#f2ebff;color:#765bc2;font-size:12px;font-weight:800;margin-bottom:8px}h1{font-size:26px;margin:4px 0 8px}.sub{font-size:14px;line-height:1.7;color:#7e7488;margin:0 0 18px}.btn{display:block;width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:15px;font-weight:800;cursor:pointer;text-decoration:none}.primary{background:linear-gradient(135deg,#7b61d1,#ec78a8);color:#fff}.secondary{margin-top:9px;background:#fff;border:1px solid #ded3ee;color:#68588a}.status{margin-top:14px;font-size:13px;line-height:1.65;color:#7e7488}.guide{display:none;margin-top:16px;text-align:left;background:#faf7ff;border:1px solid #eee5fa;border-radius:16px;padding:14px 15px;font-size:13px;line-height:1.75}.guide.show{display:block}.guide b{color:#5f4a8c}.tiny{margin-top:15px;font-size:11px;line-height:1.6;color:#a39aaa}
+</style>
+</head>
+<body>
+<main class="card">
+  <img class="icon" src="../playzip/playzip-icon-180.png" alt="PLAYZIP 아이콘">
+  <div class="badge">PLAYZIP</div>
+  <h1>홈 화면 바로가기 만들기</h1>
+  <p class="sub">PLAYZIP을 홈 화면에 추가해두면 카카오톡 링크를 다시 찾지 않아도 바로 들어올 수 있습니다.</p>
+  <button id="installBtn" class="btn primary">PLAYZIP 홈 화면에 추가</button>
+  <a id="openBtn" class="btn secondary" href="https://tech-asset.tistory.com/pages/PLAYZIP">PLAYZIP 바로 열기</a>
+  <div id="status" class="status">브라우저 환경을 확인하고 있습니다.</div>
+  <div id="guide" class="guide"></div>
+  <div class="tiny">설치 후 아이콘을 누르면 PLAYZIP 티스토리 페이지로 이동합니다.</div>
+</main>
+<script>
+(function(){
+  const TISTORY='https://tech-asset.tistory.com/pages/PLAYZIP';
+  const ua=navigator.userAgent||'';
+  const isIOS=/iPhone|iPad|iPod/i.test(ua);
+  const isAndroid=/Android/i.test(ua);
+  const isKakao=/KAKAOTALK/i.test(ua);
+  const isSamsung=/SamsungBrowser/i.test(ua);
+  const isChrome=/Chrome|CriOS/i.test(ua)&&!isSamsung;
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  const installBtn=document.getElementById('installBtn');
+  const status=document.getElementById('status');
+  const guide=document.getElementById('guide');
+  let deferredPrompt=null;
+
+  if(standalone){
+    location.replace(TISTORY);
+    return;
+  }
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+
+  function showGuide(html){guide.innerHTML=html;guide.classList.add('show');}
+  function setStatus(text){status.textContent=text;}
+
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();
+    deferredPrompt=e;
+    setStatus('설치 준비가 완료되었습니다. 아래 버튼을 누르세요.');
+  });
+
+  window.addEventListener('appinstalled',()=>{
+    deferredPrompt=null;
+    setStatus('PLAYZIP이 홈 화면에 추가되었습니다.');
+    installBtn.textContent='설치 완료';
+    installBtn.disabled=true;
+  });
+
+  installBtn.addEventListener('click',async()=>{
+    guide.classList.remove('show');
+
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const choice=await deferredPrompt.userChoice;
+      setStatus(choice.outcome==='accepted'?'설치를 진행했습니다. 홈 화면을 확인해 주세요.':'설치가 취소되었습니다.');
+      deferredPrompt=null;
+      return;
+    }
+
+    if(isKakao&&isAndroid){
+      setStatus('카카오톡 안에서는 설치창을 직접 띄울 수 없습니다.');
+      showGuide('<b>Android 카카오톡</b><br>1. 오른쪽 위 메뉴를 누릅니다.<br>2. <b>다른 브라우저로 열기</b> 또는 <b>Chrome에서 열기</b>를 선택합니다.<br>3. Chrome에서 이 페이지의 <b>PLAYZIP 홈 화면에 추가</b> 버튼을 다시 누르세요.');
+      return;
+    }
+
+    if(isKakao&&isIOS){
+      setStatus('카카오톡 안에서는 홈 화면 추가를 할 수 없습니다.');
+      showGuide('<b>iPhone 카카오톡</b><br>1. 오른쪽 위 메뉴에서 <b>Safari로 열기</b>를 선택합니다.<br>2. Safari 하단의 <b>공유</b> 버튼을 누릅니다.<br>3. <b>홈 화면에 추가</b> → <b>추가</b>를 누르세요.');
+      return;
+    }
+
+    if(isIOS){
+      setStatus('iPhone은 Safari 메뉴에서 직접 추가해야 합니다.');
+      showGuide('<b>iPhone Safari</b><br>1. 하단의 <b>공유</b> 버튼을 누릅니다.<br>2. <b>홈 화면에 추가</b>를 선택합니다.<br>3. 이름이 PLAYZIP인지 확인하고 <b>추가</b>를 누르세요.');
+      return;
+    }
+
+    if(isSamsung){
+      setStatus('삼성 인터넷 메뉴에서 홈 화면에 추가해 주세요.');
+      showGuide('<b>삼성 인터넷</b><br>1. 하단 또는 우측의 <b>≡ 메뉴</b>를 누릅니다.<br>2. <b>현재 페이지 추가</b>를 선택합니다.<br>3. <b>홈 화면</b>을 선택하세요.');
+      return;
+    }
+
+    if(isAndroid&&isChrome){
+      setStatus('Chrome이 아직 자동 설치 버튼을 허용하지 않았습니다. 메뉴에서 추가할 수 있습니다.');
+      showGuide('<b>Android Chrome</b><br>1. 오른쪽 위 <b>⋮ 메뉴</b>를 누릅니다.<br>2. <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누릅니다.<br>3. <b>설치/추가</b>를 선택하세요.');
+      return;
+    }
+
+    setStatus('이 브라우저에서는 자동 설치를 지원하지 않습니다.');
+    showGuide('브라우저 메뉴에서 <b>홈 화면에 추가</b>, <b>앱 설치</b> 또는 비슷한 메뉴를 선택해 주세요.');
+  });
+
+  setTimeout(()=>{
+    if(deferredPrompt)return;
+    if(isKakao)setStatus('카카오톡에서는 외부 브라우저로 연 뒤 설치해야 합니다.');
+    else if(isIOS)setStatus('Safari의 공유 메뉴에서 홈 화면에 추가할 수 있습니다.');
+    else if(isSamsung)setStatus('삼성 인터넷 메뉴에서 홈 화면에 추가할 수 있습니다.');
+    else if(isAndroid)setStatus('설치 버튼이 활성화되면 바로 설치할 수 있습니다. 안 뜨면 브라우저 메뉴를 사용하세요.');
+    else setStatus('모바일 브라우저에서 이용하면 홈 화면 바로가기를 만들 수 있습니다.');
+  },1200);
+})();
+</script>
+</body>
+</html>
