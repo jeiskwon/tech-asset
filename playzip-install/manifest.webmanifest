@@ -1,0 +1,24 @@
+{
+  "name": "PLAYZIP",
+  "short_name": "PLAYZIP",
+  "description": "사주, 타로, 나BTI를 한곳에서 즐기는 PLAYZIP 바로가기",
+  "start_url": "./?launch=1",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f2ff",
+  "theme_color": "#7b61d1",
+  "icons": [
+    {
+      "src": "../playzip/playzip-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
