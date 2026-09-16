@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타로 카드점 · Tistory Wrapper</title>
+<style>
+  html,body{margin:0;padding:0;background:#fff;overflow:hidden;width:100%;}
+  #tarot-app-frame{display:block;width:100%;border:0;overflow:hidden;min-height:760px;background:#fff;}
+</style>
+</head>
+<body>
+<iframe id="tarot-app-frame" title="타로 카드점" scrolling="no" allowtransparency="true"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('tarot-app-frame');
+  const BASE='https://jeiskwon.github.io/tech-asset/index.html';
+  const MIN_HEIGHT=760;
+  const MAX_HEIGHT=12000;
+  let lastHeight=0;
+  let timer=null;
+  let ro=null;
+  let mo=null;
+
+  function appUrl(){
+    return BASE+(window.location.search||'');
+  }
+
+  function postHeight(h){
+    const next=Math.max(MIN_HEIGHT,Math.min(MAX_HEIGHT,Math.ceil(h)));
+    if(Math.abs(next-lastHeight)<3)return;
+    lastHeight=next;
+    frame.style.height=next+'px';
+    window.parent.postMessage({type:'resizeTarotIframeV2',height:next},'*');
+  }
+
+  function measure(){
+    try{
+      const doc=frame.contentDocument||frame.contentWindow.document;
+      if(!doc)return;
+      const root=doc.getElementById('tarot-root');
+      if(!root)return;
+      const rect=root.getBoundingClientRect();
+      const cs=doc.defaultView.getComputedStyle(root);
+      const mt=parseFloat(cs.marginTop)||0;
+      const mb=parseFloat(cs.marginBottom)||0;
+      // body/html의 min-height나 부모가 준 iframe 높이는 보지 않고,
+      // 실제 tarot-root 콘텐츠 높이만 기준으로 계산한다.
+      const contentHeight=Math.max(root.scrollHeight,rect.height)+mt+mb+12;
+      postHeight(contentHeight);
+    }catch(e){
+      // same-origin 상태에서만 측정 가능. 실패 시 기존 높이 유지.
+    }
+  }
+
+  function scheduleMeasure(){
+    clearTimeout(timer);
+    timer=setTimeout(measure,60);
+  }
+
+  function attachObservers(){
+    try{
+      const doc=frame.contentDocument||frame.contentWindow.document;
+      const root=doc.getElementById('tarot-root');
+      if(!root)return;
+
+      if(ro)ro.disconnect();
+      if(mo)mo.disconnect();
+
+      ro=new ResizeObserver(scheduleMeasure);
+      ro.observe(root);
+
+      mo=new MutationObserver(scheduleMeasure);
+      mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
+
+      doc.querySelectorAll('img').forEach(img=>{
+        if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true});
+      });
+    }catch(e){}
+  }
+
+  frame.addEventListener('load',function(){
+    attachObservers();
+    measure();
+    [120,350,800,1500].forEach(ms=>setTimeout(measure,ms));
+  });
+
+  // 안쪽 index.html이 보내는 구형 높이 메시지는 wrapper에서 소비하고
+  // Tistory 부모로 그대로 전달하지 않는다.
+  window.addEventListener('message',function(e){
+    if(e.source===frame.contentWindow){
+      scheduleMeasure();
+    }
+  });
+
+  frame.src=appUrl();
+})();
+</script>
+</body>
+</html>
