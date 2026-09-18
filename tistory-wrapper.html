@@ -1,72 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타로 카드점 · Tistory Wrapper</title>
-<style>
-  html,body{margin:0;padding:0;background:#fff;overflow:hidden;width:100%;}
-  #tarot-app-frame{display:block;width:100%;border:0;overflow:hidden;min-height:760px;background:#fff;}
-</style>
-</head>
-<body>
-<iframe id="tarot-app-frame" title="타로 카드점" scrolling="no" allowtransparency="true"></iframe>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오늘의 타로로 이동</title>
 <script>
 (function(){
-  const frame=document.getElementById('tarot-app-frame');
-  const BASE='https://jeiskwon.github.io/tech-asset/index.html';
-  const MIN_HEIGHT=760;
-  const MAX_HEIGHT=12000;
-  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
-  let lastHeight=0,timer=null,ro=null,mo=null;
-
-  function appUrl(){return BASE+(window.location.search||'');}
-  function postHeight(h){
-    const next=Math.max(MIN_HEIGHT,Math.min(MAX_HEIGHT,Math.ceil(h)));
-    if(Math.abs(next-lastHeight)<3)return;
-    lastHeight=next;frame.style.height=next+'px';
-    window.parent.postMessage({type:'resizeTarotIframeV2',height:next},'*');
-  }
-  function injectPlayzipOnResult(){
-    try{
-      const doc=frame.contentDocument||frame.contentWindow.document;
-      const root=doc.getElementById('tarot-root');
-      if(!root)return;
-      const isResult=!!root.querySelector('.tarot-result-frame, .tarot-pos-block');
-      if(!isResult||root.querySelector('#playzip-tarot-result'))return;
-      const card=root.querySelector('.tarot-card');if(!card)return;
-      const installLink=isMobile?`<a href="https://tech-asset.tistory.com/pages/PLAYZIP#install" target="_top" style="display:block;text-decoration:none;border:1px solid #ddd2f1;background:#fff;color:#675591;padding:11px 14px;border-radius:14px;font-weight:700;">📱 다음에도 바로 오도록 홈 화면에 추가</a>`:'';
-      const box=doc.createElement('div');
-      box.id='playzip-tarot-result';
-      box.style.cssText='margin-top:18px;padding:17px 15px;border:1px solid #e3d9f3;border-radius:18px;background:linear-gradient(145deg,#fff,#faf6ff);text-align:center;';
-      box.innerHTML=`<div style="font-size:17px;font-weight:800;color:#3f3560;margin-bottom:5px;">다른 것도 해볼까요?</div><div style="font-size:12.5px;line-height:1.6;color:#8a7fa8;margin-bottom:12px;">사주 · 타로 · 나BTI를 PLAYZIP에서 골라 즐겨보세요.</div><a href="https://tech-asset.tistory.com/pages/PLAYZIP" target="_top" style="display:block;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-weight:800;${isMobile?'margin-bottom:8px;':''}">PLAYZIP에서 다른 콘텐츠 보기 →</a>${installLink}`;
-      card.appendChild(box);scheduleMeasure();
-    }catch(e){}
-  }
-  function measure(){
-    try{
-      const doc=frame.contentDocument||frame.contentWindow.document;
-      const root=doc.getElementById('tarot-root');if(!root)return;
-      const rect=root.getBoundingClientRect(),cs=doc.defaultView.getComputedStyle(root);
-      const mt=parseFloat(cs.marginTop)||0,mb=parseFloat(cs.marginBottom)||0;
-      postHeight(Math.max(root.scrollHeight,rect.height)+mt+mb+12);
-    }catch(e){}
-  }
-  function scheduleMeasure(){clearTimeout(timer);timer=setTimeout(function(){injectPlayzipOnResult();measure();},60);}
-  function attachObservers(){
-    try{
-      const doc=frame.contentDocument||frame.contentWindow.document;
-      const root=doc.getElementById('tarot-root');if(!root)return;
-      if(ro)ro.disconnect();if(mo)mo.disconnect();
-      ro=new ResizeObserver(scheduleMeasure);ro.observe(root);
-      mo=new MutationObserver(scheduleMeasure);mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
-      doc.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',scheduleMeasure,{once:true});});
-    }catch(e){}
-  }
-  frame.addEventListener('load',function(){attachObservers();injectPlayzipOnResult();measure();[120,350,800,1500].forEach(ms=>setTimeout(function(){injectPlayzipOnResult();measure();},ms));});
-  window.addEventListener('message',function(e){if(e.source===frame.contentWindow)scheduleMeasure();});
-  frame.src=appUrl();
+  var target='https://jeiskwon.github.io/tech-asset/'+(location.search||'')+(location.hash||'');
+  location.replace(target);
 })();
 </script>
+</head>
+<body>
+<p>새 타로 페이지로 이동합니다. <a href="https://jeiskwon.github.io/tech-asset/">바로 이동</a></p>
 </body>
 </html>
