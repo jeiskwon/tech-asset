@@ -14,7 +14,7 @@
 </head>
 <body>
 <!-- ============================================================
-  타로 카드점 - GitHub Pages에 올려 티스토리에서 iframe으로 불러옵니다
+  타로 카드점 - GitHub Pages 독립 실행 버전
   ============================================================
   ★ 78장 + 뒷면 + UI 아이콘 이미지 URL(imgBB) 전부 반영 완료 (신규 91종) ★
   ★ 나BTI 리소스 재사용 3종(공유아이콘/다시하기아이콘/배경패턴)도 반영 완료 ★
@@ -31,20 +31,6 @@
 </script>
 <div id="tarot-root">&nbsp;</div>
 <style>
-  /* ▼ ①번 CSS 코드를 <style> 바로 아래에 붙여넣습니다 ▼ */
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 800px;
-    height: auto !important;
-    overflow: visible !important;
-  }
-  .container, .tarot-wrapper, .wrapper {
-    height: auto !important;
-    min-height: 800px;
-  }
-
   /* 기존 스타일 시작 */
   #tarot-root {
     --purple: #6b5b95;
@@ -1858,9 +1844,8 @@ const THEME_CATEGORY = {
   let state = { nickname: "", category: null, spread: null };
   const root = document.getElementById("tarot-root");
 
-  // (참고) iframe 높이 자동 조절은 파일 맨 아래 resizeTarotIframe 스크립트가 전담합니다.
-  const linkUrl = "tech-asset.tistory.com/74";
-  const shareLinkUrl = "https://" + linkUrl;
+  const shareLinkUrl = "https://jeiskwon.github.io/tech-asset/";
+  const playzipUrl = "https://jeiskwon.github.io/playzip/";
 
   // 사용자 입력(닉네임 등)을 화면에 그대로 꽂아 넣기 전에 이스케이프 처리 (XSS 방지)
   function escapeHtml(str) {
@@ -2268,6 +2253,7 @@ const THEME_CATEGORY = {
         </div>
 
         ${bottomHtml}
+        <a href="${playzipUrl}" style="display:block;margin-top:12px;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-weight:800;text-align:center;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
       </div>
     `;
 
@@ -2349,6 +2335,7 @@ const THEME_CATEGORY = {
         <div class="tarot-sub">${state.nickname}님을 위한 ${catLabel} 리딩이에요</div>
         ${blocksHtml}
         ${bottomHtml}
+        <a href="${playzipUrl}" style="display:block;margin-top:12px;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-weight:800;text-align:center;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
       </div>
     `;
 
@@ -2396,52 +2383,5 @@ const THEME_CATEGORY = {
   }
 })();
 </script>
-<!-- ▼ 아래 코드를 맨 밑에 추가해 주세요 ▼ -->
-    <script>
-      function computeContentHeight() {
-        return Math.max(
-          document.documentElement.scrollHeight,
-          document.body.scrollHeight,
-          document.documentElement.offsetHeight,
-          document.body.offsetHeight,
-          600
-        );
-      }
-
-      function sendHeightToParent() {
-        window.parent.postMessage({ type: 'resizeTarotIframe', height: computeContentHeight() }, '*');
-      }
-
-      // 화면이 바뀔 때(카드 뽑기 → 결과 → 다시 뽑기 등) 높이를 여러 번 다시 재서 보낸다.
-      // 한 번만 재면 카드 이미지 로딩 등으로 실제 레이아웃이 늦게 확정되는 경우
-      // (특히 긴 켈틱크로스 결과 → 짧은 화면으로 돌아갈 때) iframe이 큰 채로 남아
-      // 프레임 아래에 빈 여백이 생기는 문제가 있었다.
-      let heightSyncTimers = [];
-      function scheduleHeightSync() {
-        heightSyncTimers.forEach(clearTimeout);
-        heightSyncTimers = [];
-        sendHeightToParent();
-        [50, 150, 400, 900].forEach(delay => {
-          heightSyncTimers.push(setTimeout(sendHeightToParent, delay));
-        });
-      }
-
-      window.addEventListener('load', scheduleHeightSync);
-      window.addEventListener('resize', scheduleHeightSync);
-
-      // 화면 전환(각 render 함수의 root.innerHTML 교체)마다 자동으로 감지해서 재동기화
-      if (window.MutationObserver) {
-        var tarotRootEl = document.getElementById('tarot-root');
-        var mo = new MutationObserver(scheduleHeightSync);
-        mo.observe(tarotRootEl || document.body, { childList: true, subtree: true });
-      }
-
-      if (window.ResizeObserver) {
-        var observer = new ResizeObserver(scheduleHeightSync);
-        observer.observe(document.body);
-      }
-
-      scheduleHeightSync();
-    </script>
-  </body>
+</body>
 </html>
