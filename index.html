@@ -79,6 +79,44 @@
     margin: 0 auto 20px;
     border-radius: 16px;
   }
+  .tarot-start-card {
+    background:
+      radial-gradient(circle at 15% 12%, rgba(218,187,255,.18), transparent 22%),
+      radial-gradient(circle at 85% 18%, rgba(255,219,137,.12), transparent 20%),
+      linear-gradient(165deg, #171126 0%, #2d2149 58%, #161121 100%);
+    color: #fff;
+    min-height: 620px;
+    padding: 30px 22px 24px;
+  }
+  .tarot-start-kicker {
+    text-align:center;font-size:11px;font-weight:800;letter-spacing:.14em;color:#d8c9ee;margin-bottom:10px;
+  }
+  .tarot-start-card .tarot-title { color:#fff;font-size:28px;line-height:1.28;margin-top:0; }
+  .tarot-start-card .tarot-sub { color:#cfc3df;font-size:14px;line-height:1.7;margin-bottom:14px; }
+  .tarot-start-visual {
+    position:relative;height:250px;margin:4px auto 14px;max-width:320px;
+  }
+  .tarot-start-visual:before {
+    content:"";position:absolute;inset:16% 12%;border-radius:50%;
+    background:radial-gradient(circle,rgba(212,175,55,.18),rgba(125,93,171,.08) 42%,transparent 70%);
+    filter:blur(3px);
+  }
+  .tarot-start-cardback {
+    position:absolute;left:50%;top:18px;width:112px;height:auto;aspect-ratio:2/3;object-fit:contain;border-radius:12px;
+    box-shadow:0 14px 28px rgba(0,0,0,.34);transform-origin:50% 92%;
+  }
+  .tarot-start-cardback.one { transform:translateX(-50%) rotate(-13deg) translateX(-42px); }
+  .tarot-start-cardback.two { transform:translateX(-50%) translateY(-5px);z-index:2; }
+  .tarot-start-cardback.three { transform:translateX(-50%) rotate(13deg) translateX(42px); }
+  .tarot-start-stars {position:absolute;inset:0;pointer-events:none;font-size:15px;color:#efd78c}
+  .tarot-start-stars i{position:absolute;font-style:normal;opacity:.82}
+  .tarot-start-stars i:nth-child(1){left:8%;top:17%}.tarot-start-stars i:nth-child(2){right:10%;top:28%}.tarot-start-stars i:nth-child(3){left:16%;bottom:18%}.tarot-start-stars i:nth-child(4){right:15%;bottom:11%}
+  .tarot-start-features {display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+  .tarot-start-features span {font-size:10px;font-weight:750;color:#dbcfee;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);padding:6px 9px;border-radius:999px}
+  .tarot-start-card .tarot-nickname-input {background:rgba(255,255,255,.96);border-color:rgba(255,255,255,.22);color:#342d49;margin-top:4px}
+  .tarot-start-card .tarot-btn {background:linear-gradient(135deg,#8e6bd0,#c395df);box-shadow:0 10px 24px rgba(110,76,160,.28)}
+  .tarot-start-foot {text-align:center;color:#a99bbd;font-size:10px;line-height:1.5;margin-top:12px}
+  @media(max-width:520px){#tarot-root{margin:10px auto}.tarot-start-card{border-radius:0;min-height:calc(100vh - 20px);padding-top:24px}.tarot-start-visual{height:235px}.tarot-start-cardback{width:104px}}
   .tarot-nickname-input {
     display: block;
     width: 100%;
@@ -1973,13 +2011,20 @@ const THEME_CATEGORY = {
   // ============================================================
   function renderStart() {
     root.innerHTML = `
-      <div class="tarot-card">
-        <img class="tarot-banner" src="${IMG.bgPattern}" alt="배경장식" />
-        <div class="tarot-title">🔮 타로 카드점</div>
-        <div class="tarot-sub">78장의 카드가 전하는<br/>오늘의 메시지를 만나보세요</div>
-        <img class="tarot-cover-img" src="${IMG.cover}" alt="타로 카드점 표지" />
+      <div class="tarot-card tarot-start-card">
+        <div class="tarot-start-kicker">PLAYZIP TAROT</div>
+        <div class="tarot-title">오늘, 어떤 카드가<br/>나를 기다릴까?</div>
+        <div class="tarot-sub">78장의 카드 중 지금의 나에게 필요한<br/>메시지를 한 장씩 만나보세요.</div>
+        <div class="tarot-start-visual" aria-label="타로 카드 3장">
+          <div class="tarot-start-stars"><i>✦</i><i>✧</i><i>✦</i><i>☾</i></div>
+          <img class="tarot-start-cardback one" src="${IMG.back}" alt="" />
+          <img class="tarot-start-cardback two" src="${IMG.back}" alt="타로 카드" />
+          <img class="tarot-start-cardback three" src="${IMG.back}" alt="" />
+        </div>
+        <div class="tarot-start-features"><span>78장</span><span>정·역방향</span><span>1장 · 3장 · 켈틱</span></div>
         <input type="text" id="tarot-nickname-input" class="tarot-nickname-input" placeholder="이름/별명 (선택)" maxlength="10" />
-        <button class="tarot-btn" id="tarot-start-btn">카드 뽑으러 가기 ✨</button>
+        <button class="tarot-btn" id="tarot-start-btn">카드 뽑기</button>
+        <div class="tarot-start-foot">마음속 질문을 하나 떠올린 뒤 시작해보세요.</div>
       </div>
     `;
     const nicknameInput = document.getElementById("tarot-nickname-input");
