@@ -2440,6 +2440,48 @@ const THEME_CATEGORY = {
   }
 })();
 </script>
+
+<!-- 티스토리 기존 게시글 /74 iframe 높이 자동 조정: GitHub 독립 페이지에는 영향 없음 -->
+<script id="tistory-iframe-resize">
+(function () {
+  'use strict';
+  if (window.parent === window) return;
+  var root = document.getElementById('tarot-root');
+  if (!root) return;
+  var scheduled = false;
+  var previous = 0;
+  function reportHeight() {
+    scheduled = false;
+    var rect = root.getBoundingClientRect();
+    var height = Math.ceil(Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight,
+      rect.bottom + window.scrollY + 16
+    ));
+    height = Math.max(600, Math.min(12000, height));
+    if (Math.abs(height - previous) < 3) return;
+    previous = height;
+    window.parent.postMessage(
+      { type: 'resizeTarotIframeV2', height: height },
+      'https://tech-asset.tistory.com'
+    );
+  }
+  function scheduleReport() {
+    if (scheduled) return;
+    scheduled = true;
+    window.requestAnimationFrame(reportHeight);
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    var observer = new ResizeObserver(scheduleReport);
+    observer.observe(root);
+    observer.observe(document.body);
+  }
+  document.addEventListener('load', scheduleReport, true);
+  window.addEventListener('load', scheduleReport);
+  window.addEventListener('resize', scheduleReport);
+  scheduleReport();
+})();
+</script>
 </body>
 </html>
 
