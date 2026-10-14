@@ -1,0 +1,230 @@
+<div style="font-size: 16px; line-height: 1.9; color: #222; word-break: keep-all;">
+<p data-ke-size="size16">&lsquo;10년 뒤 1억원&rsquo;처럼 목표는 정했는데 매달 얼마를 넣어야 할지 모르겠다면, 미래금액을 예상하는 계산을 거꾸로 풀어야 합니다. 처음 가진 돈, 남은 기간, 기대수익률이 같아도 비용과 납입 시점에 따라 필요한 월 적립액은 달라집니다.</p>
+<p data-ke-size="size16">이 글의 계산기는 목표 달성을 보장하지 않습니다. 일정한 수익률로 매달 복리 운용된다는 가정을 숫자로 확인하는 도구입니다. 미국 증권거래위원회 투자자 교육 사이트의 <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer">복리 계산기</a>도 초기 투자금, 월 납입액, 기간, 예상 연이율과 복리 주기를 구분해 입력하도록 구성되어 있습니다.</p>
+<h2 data-ke-size="size26">목표금액 계산에서 먼저 정할 다섯 가지</h2>
+<p data-ke-size="size16">계산 전에 입력값의 의미를 분명히 해야 합니다.</p>
+<ul style="list-style-type: disc;" data-ke-list-type="disc">
+<li><b>목표금액:</b> 투자기간이 끝나는 시점에 계좌에서 보고 싶은 금액입니다.</li>
+<li><b>현재 투자금:</b> 오늘 이미 투자되어 있고 앞으로 같은 수익률로 운용된다고 가정하는 금액입니다.</li>
+<li><b>투자기간:</b> 월 납입을 이어갈 전체 기간입니다.</li>
+<li><b>예상 연수익률:</b> 세전&middot;비용 차감 전의 명목 기대수익률입니다.</li>
+<li><b>연간비용률:</b> 상품 보수 등 매년 수익을 낮춘다고 단순화해 반영할 비용입니다.</li>
+</ul>
+<p data-ke-size="size16">물가를 반영하지 않은 10년 뒤 1억원은 오늘의 1억원과 구매력이 같지 않습니다. 세금도 계좌와 상품, 매매 방식에 따라 달라 이 계산기에는 넣지 않았습니다. 따라서 결과는 &lsquo;매달 이 금액이면 확실하다&rsquo;가 아니라 계획의 출발점으로 읽어야 합니다.</p>
+<div class="image-block">&nbsp;</div>
+<div class="image-caption" style="font-size: 13px; color: #777; margin-bottom: 20px;">[##_Image|kage@s2SrR/dJMcaatyjxj/AAAAAAAAAAAAAAAAAAAAABs09WglH6zcAtQ735ZppwSxQjQDptoPPDkNAn4m-MmM/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&amp;expires=1793458799&amp;allow_ip=&amp;allow_referer=&amp;signature=yhucwuCb2WAuV8x9mza3lVyv3FU%3D|CDM|1.3|{"originWidth":1672,"originHeight":941,"style":"alignCenter","filename":"51863bb1-b7b1-4f56-9cd9-347c5e3b3db5.png"}_##]</div>
+<h2 data-ke-size="size26">목표금액에서 월 적립액을 거꾸로 계산하는 원리</h2>
+<p data-ke-size="size16">매달 말 같은 금액을 넣는다고 가정하면 목표금액은 현재 투자금의 미래가치와 월 적립금의 미래가치를 합한 값입니다.</p>
+<p data-ke-size="size16"><b>목표금액 = 현재 투자금 &times; (1 + 월수익률)^개월 수 + 월 적립액 &times; {((1 + 월수익률)^개월 수 - 1) &divide; 월수익률}</b></p>
+<p data-ke-size="size16">계산기는 비용 차감 후 연수익률을 <b>(1 + 예상 연수익률) &times; (1 - 연간비용률) - 1</b>로 단순 계산한 뒤, 이를 월 복리수익률로 바꿉니다. 예를 들어 예상 연수익률 5%, 연간비용률 0.3%라면 단순히 4.7%를 쓰는 대신 두 비율을 곱해 비용 차감 후 연수익률을 구합니다.</p>
+<p data-ke-size="size16">수익률이 0%라면 복리 공식 대신 <b>(목표금액 - 현재 투자금) &divide; 전체 납입 개월 수</b>로 계산합니다. 현재 투자금이 이미 목표금액에 도달했거나 가정상 미래가치가 목표를 넘으면 필요한 월 적립액은 0원으로 표시합니다.</p>
+<h2 data-ke-size="size26">내 목표 월 적립액 계산하기</h2>
+<p data-ke-size="size16">아래 기본값은 목표금액 1억원, 현재 투자금 1,000만원, 기간 10년, 예상 연수익률 5%, 연간비용률 0.3%, 매월 말 납입입니다. 금액 입력창은 천 단위 쉼표를 표시하고 ▲&middot;▼ 버튼을 누르면 1,000원씩 바뀝니다. 기간은 1개월, 수익률과 비용률은 0.1%포인트씩 조정됩니다.</p>
+<div id="goal-saving-calculator" style="max-width: 720px; margin: 24px 0; padding: 22px; border: 1px solid #cbdced; border-radius: 12px; background: #f5f9fd; box-sizing: border-box;">
+<h3 style="margin: 0 0 8px;" data-ke-size="size23">내 목표 월 적립액 계산하기</h3>
+<p style="margin: 0 0 18px; line-height: 1.7;" data-ke-size="size16">금액 입력창은 천 단위 쉼표를 표시하고 ▲&middot;▼ 버튼을 누르면 금액은 1,000원, 기간은 1개월, 수익률과 비용률은 0.1%포인트씩 바뀝니다.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px;"><label style="display: block;">목표금액 (원)<span style="display: flex; margin-top: 5px;"><input style="width: 100%; min-width: 0; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px 0 0 6px; box-sizing: border-box;" type="text" value="100,000,000" data-field="goal" data-step="1000" data-money="true" aria-label="목표금액 (원)" /><span style="display: flex; flex-direction: column;"><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="goal" data-direction="1" aria-label="목표금액 (원) 증가">▲</button><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="goal" data-direction="-1" aria-label="목표금액 (원) 감소">▼</button></span></span></label><label style="display: block;">현재 투자금 (원)<span style="display: flex; margin-top: 5px;"><input style="width: 100%; min-width: 0; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px 0 0 6px; box-sizing: border-box;" type="text" value="10,000,000" data-field="initial" data-step="1000" data-money="true" aria-label="현재 투자금 (원)" /><span style="display: flex; flex-direction: column;"><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="initial" data-direction="1" aria-label="현재 투자금 (원) 증가">▲</button><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="initial" data-direction="-1" aria-label="현재 투자금 (원) 감소">▼</button></span></span></label><label style="display: block;">투자기간 (개월)<span style="display: flex; margin-top: 5px;"><input style="width: 100%; min-width: 0; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px 0 0 6px; box-sizing: border-box;" type="text" value="120" data-field="months" data-step="1" aria-label="투자기간 (개월)" /><span style="display: flex; flex-direction: column;"><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="months" data-direction="1" aria-label="투자기간 (개월) 증가">▲</button><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="months" data-direction="-1" aria-label="투자기간 (개월) 감소">▼</button></span></span></label><label style="display: block;">예상 연수익률 (%)<span style="display: flex; margin-top: 5px;"><input style="width: 100%; min-width: 0; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px 0 0 6px; box-sizing: border-box;" type="text" value="5" data-field="gross" data-step="0.1" aria-label="예상 연수익률 (%)" /><span style="display: flex; flex-direction: column;"><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="gross" data-direction="1" aria-label="예상 연수익률 (%) 증가">▲</button><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="gross" data-direction="-1" aria-label="예상 연수익률 (%) 감소">▼</button></span></span></label><label style="display: block;">연간비용률 (%)<span style="display: flex; margin-top: 5px;"><input style="width: 100%; min-width: 0; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px 0 0 6px; box-sizing: border-box;" type="text" value="0.3" data-field="cost" data-step="0.1" aria-label="연간비용률 (%)" /><span style="display: flex; flex-direction: column;"><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="cost" data-direction="1" aria-label="연간비용률 (%) 증가">▲</button><button style="width: 32px; height: 22px; cursor: pointer;" type="button" data-adjust="cost" data-direction="-1" aria-label="연간비용률 (%) 감소">▼</button></span></span></label> <label style="display: block;">납입 시점<select style="display: block; width: 100%; margin-top: 5px; padding: 10px; border: 1px solid #9db8d2; border-radius: 6px; box-sizing: border-box;" data-field="timing" aria-label="납입 시점">
+<option selected="selected" value="end">매월 말</option>
+<option value="begin">매월 초</option>
+</select></label></div>
+<div style="margin-top: 18px; padding: 16px; background: #fff; border-radius: 8px; line-height: 2;">
+<div>비용 차감 후 연수익률: <b data-result="netRate">-</b></div>
+<div>필요 월 적립액: <b data-result="monthly">-</b></div>
+<div>총 원금 납입액: <b data-result="principal">-</b></div>
+<div>가정상 운용수익: <b data-result="growth">-</b></div>
+<div>투자기간: <b data-result="period">-</b></div>
+</div>
+<p style="margin: 12px 0 0; color: #9b3030;" data-ke-size="size16" data-result="message" aria-live="polite">&nbsp;</p>
+<p style="margin: 10px 0 0; font-size: 0.9em; color: #526579; line-height: 1.7;" data-ke-size="size16">세금&middot;물가&middot;매매수수료&middot;환전비용&middot;수익률 변동과 납입 공백은 반영하지 않습니다. 계산 결과는 목표 달성을 보장하지 않습니다.</p>
+</div>
+<script>
+(function () {
+  'use strict';
+  const box = document.getElementById('goal-saving-calculator');
+  if (!box || box.dataset.calculatorBound === 'true') return;
+  box.dataset.calculatorBound = 'true';
+
+  const field = name => box.querySelector('[data-field="' + name + '"]');
+  const output = name => box.querySelector('[data-result="' + name + '"]');
+  const outputs = ['netRate', 'monthly', 'principal', 'growth', 'period'];
+  const moneyText = value => Math.round(value).toLocaleString('ko-KR') + '원';
+  const minValues = {goal: 1, initial: 0, months: 1, gross: -99.9, cost: 0};
+  const maxValues = {months: 1200, gross: 1000, cost: 99.9};
+
+  function readValue(name) {
+    const raw = String(field(name).value).replace(/,/g, '').trim();
+    if (raw === '') return NaN;
+    return Number(raw);
+  }
+  function clear(message) {
+    outputs.forEach(name => { output(name).textContent = '-'; });
+    output('message').textContent = message;
+  }
+  function reformatMoney(input, preserveCaret) {
+    const before = String(input.value);
+    const caret = preserveCaret ? input.selectionStart : null;
+    const countBeforeCaret = caret == null ? 0 : before.slice(0, caret).replace(/\D/g, '').length;
+    const digits = before.replace(/\D/g, '');
+    if (digits === '') {
+      input.value = '';
+      return;
+    }
+    const formatted = Math.round(Number(digits)).toLocaleString('ko-KR');
+    input.value = formatted;
+    if (caret != null && document.activeElement === input) {
+      let index = 0, digitCount = 0;
+      while (index < formatted.length && digitCount < countBeforeCaret) {
+        if (/\d/.test(formatted[index])) digitCount++;
+        index++;
+      }
+      input.setSelectionRange(index, index);
+    }
+  }
+
+  function calculate() {
+    const goal = readValue('goal'), initial = readValue('initial');
+    const months = readValue('months'), gross = readValue('gross'), cost = readValue('cost');
+    if (![goal, initial, months, gross, cost].every(Number.isFinite)
+      || goal <= 0 || initial < 0 || !Number.isInteger(months)
+      || months < 1 || months > 1200 || gross <= -100
+      || gross > 1000 || cost < 0 || cost >= 100) {
+      clear('입력값을 확인해 주세요. 목표금액은 양수, 기간은 1~1,200개월의 정수여야 합니다.');
+      return;
+    }
+
+    const netAnnual = (1 + gross / 100) * (1 - cost / 100) - 1;
+    if (netAnnual <= -1 || !Number.isFinite(netAnnual)) {
+      clear('비용 차감 후 연수익률을 계산할 수 없습니다. 수익률과 비용률을 확인해 주세요.');
+      return;
+    }
+    const rate = Math.expm1(Math.log1p(netAnnual) / 12);
+    const factor = Math.exp(months * Math.log1p(rate));
+    let annuity = Math.abs(rate) < 1e-12
+      ? months
+      : Math.expm1(months * Math.log1p(rate)) / rate;
+    if (field('timing').value === 'begin') annuity *= (1 + rate);
+    if (!Number.isFinite(factor) || !Number.isFinite(annuity) || annuity <= 0) {
+      clear('현재 입력값으로 계산할 수 없습니다. 수익률 또는 기간을 조정해 주세요.');
+      return;
+    }
+    const rawMonthly = Math.max(0, (goal - initial * factor) / annuity);
+    const monthly = Math.max(0, Math.ceil(rawMonthly - 1e-8));
+    const principal = initial + monthly * months;
+    const futureValue = initial * factor + monthly * annuity;
+    const growth = futureValue - principal;
+
+    output('netRate').textContent = (netAnnual * 100).toFixed(3) + '%';
+    output('monthly').textContent = moneyText(monthly);
+    output('principal').textContent = moneyText(principal);
+    // 목표 초과 시에도 '목표금액 - 원금'이 아닌 실제 예상 최종금액 - 원금을 사용한다.
+    output('growth').textContent = moneyText(growth);
+    output('period').textContent = Math.floor(months / 12) + '년 ' + (months % 12) + '개월';
+    output('message').textContent = monthly === 0
+      ? '현재 투자금의 가정상 미래가치가 목표금액 이상입니다. 운용수익은 실제 예상 최종금액 기준입니다.'
+      : '필요 월 적립액은 원 단위로 올림해 표시하며 목표 달성을 보장하지 않습니다.';
+  }
+
+  box.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+      if (input.dataset.money === 'true') reformatMoney(input, true);
+      calculate();
+    });
+    input.addEventListener('blur', () => {
+      if (input.dataset.money === 'true') reformatMoney(input, false);
+      calculate();
+    });
+  });
+  field('timing').addEventListener('change', calculate);
+  box.querySelectorAll('[data-adjust]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.adjust;
+      const input = field(name);
+      const step = Number(input.dataset.step);
+      const direction = Number(btn.dataset.direction);
+      if (!Number.isFinite(step) || ![1, -1].includes(direction)) return;
+      const current = readValue(name);
+      const start = Number.isFinite(current) ? current : (minValues[name] ?? 0);
+      const rounded = Math.round((start + direction * step) * 10) / 10;
+      const min = minValues[name] ?? 0;
+      const max = maxValues[name] ?? Number.MAX_SAFE_INTEGER;
+      const next = Math.min(max, Math.max(min, rounded));
+      input.value = input.dataset.money === 'true'
+        ? Math.round(next).toLocaleString('ko-KR')
+        : String(next);
+      calculate();
+    });
+  });
+  calculate();
+})();
+</script>
+<p data-ke-size="size16">기본값의 계산 결과는 <b>필요 월 적립액 약 554,262원</b>, 총 원금 납입액 약 76,511,440원, 가정상 운용수익 약 23,488,560원입니다. 월 적립액은 원 단위 계산값이며 실제 계획을 세울 때는 납입 가능한 단위로 올림하고 여유분을 두는 편이 안전합니다.</p>
+<h2 data-ke-size="size26">같은 목표도 수익률 가정에 따라 월 부담이 달라진다</h2>
+<p data-ke-size="size16">목표 1억원, 현재 투자금 1,000만원, 기간 10년, 연간비용률 0.3%, 매월 말 납입을 유지하고 예상 연수익률만 바꾸면 다음과 같습니다.</p>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; margin: 18px 0;" data-ke-align="alignLeft">
+<thead>
+<tr style="background: #f5f6f8;">
+<th style="border: 1px solid #ddd; padding: 9px; text-align: left;">예상 연수익률</th>
+<th style="border: 1px solid #ddd; padding: 9px; text-align: left;">비용 차감 후 연수익률</th>
+<th style="border: 1px solid #ddd; padding: 9px; text-align: left;">필요한 월 적립액</th>
+<th style="border: 1px solid #ddd; padding: 9px; text-align: left;">해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">3%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 2.691%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 633,395원</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">수익률을 낮게 잡으면 저축 부담이 커집니다.</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">5%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 4.685%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 554,262원</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">기본 시나리오입니다.</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">7%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 6.679%</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">약 480,909원</td>
+<td style="border: 1px solid #ddd; padding: 9px; text-align: left;">높은 수익률을 가정할수록 필요한 납입액이 작아집니다.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p data-ke-size="size16">표의 차이는 투자상품 추천이 아니라 가정의 민감도를 보여줍니다. 7%를 입력했다고 실제로 매년 7%가 나오지는 않습니다. 높은 기대수익률을 넣어 월 부담을 작아 보이게 만들면 계획이 낙관적으로 변합니다. 현실적인 계획은 낮은 수익률에서도 감당 가능한 금액인지 먼저 확인하고, 실제 성과가 좋으면 목표 시점을 앞당기는 방식이 낫습니다.</p>
+<h2 data-ke-size="size26">기간 10년과 20년의 차이는 단순히 절반이 아니다</h2>
+<p data-ke-size="size16">같은 기본조건에서 기간만 20년으로 늘리면 필요한 월 적립액은 약 <b>191,359원</b>으로 줄어듭니다. 10년 계산값 554,262원의 절반보다도 작습니다. 먼저 넣은 돈과 초기 투자금이 더 오래 복리로 운용되기 때문입니다.</p>
+<p data-ke-size="size16">하지만 기간이 길수록 불확실성도 커집니다. 장기 평균수익률은 매년 고르게 발생하지 않고, 중간에 큰 하락이나 소득 공백이 생길 수 있습니다. 과거 수익률을 그대로 미래 20년에 복사해서는 안 됩니다. 목표일까지 남은 기간은 투자수익률보다 내가 실제로 통제하기 쉬운 변수이므로, 지나치게 높은 수익률을 기대하기 전에 기간과 월 납입액을 함께 조정해 보세요.</p>
+<h2 data-ke-size="size26">비용 0.3%가 월 적립액에 미치는 영향</h2>
+<p data-ke-size="size16">기본조건에서 연간비용률을 0%로 놓으면 필요한 월 적립액은 약 <b>542,299원</b>입니다. 연간비용률 0.3%를 반영한 554,262원과 비교하면 매달 약 11,963원 차이입니다. 작은 비율도 120개월 동안 누적되면 목표 계획에 영향을 줍니다.</p>
+<p data-ke-size="size16">Investor.gov의 <a href="https://www.investor.gov/introduction-investing/getting-started/understanding-fees" target="_blank" rel="noopener noreferrer">투자비용 설명</a>은 작은 비용도 장기간 포트폴리오 가치에 큰 영향을 줄 수 있다고 안내합니다. 다만 이 계산기의 연간비용률은 모든 실제 비용을 정확히 재현하지 않습니다. 매매수수료, 세금, 환전비용, 추적오차, 상품별 비용 차이는 별도로 확인해야 합니다.</p>
+<h2 data-ke-size="size26">매월 초 납입과 말 납입은 무엇이 다른가</h2>
+<p data-ke-size="size16">기본조건에서 매월 말 납입은 약 554,262원이 필요하지만 매월 초 납입으로 바꾸면 약 <b>552,152원</b>입니다. 각 납입금이 한 달씩 더 오래 운용되는 효과 때문입니다. 차이는 크지 않지만 계산 기준을 섞으면 결과 비교가 틀어집니다.</p>
+<p data-ke-size="size16">월급날 직후 자동이체처럼 실제 납입 시점을 정하고 같은 기준으로 비교하세요. 한 달 안의 시장가격을 예측해 날짜를 고르는 계산은 아닙니다. 자동이체가 중단되지 않도록 현금흐름과 비상자금을 먼저 확보하는 것이 중요합니다.</p>
+<h2 data-ke-size="size26">결과를 현실적인 계획으로 바꾸는 세 단계</h2>
+<ol style="list-style-type: decimal;" data-ke-list-type="decimal">
+<li><b>낮음&middot;기준&middot;높음 세 시나리오를 저장합니다.</b> 하나의 수익률만 보지 말고 3%&middot;5%&middot;7%처럼 월 부담이 얼마나 달라지는지 확인합니다.</li>
+<li><b>감당 가능한 월 납입액과 비교합니다.</b> 계산값이 예산보다 크면 수익률을 억지로 높이지 말고 목표금액&middot;기간&middot;현재 투자금을 조정합니다.</li>
+<li><b>1년에 한 번 다시 계산합니다.</b> 실제 잔액, 남은 기간, 비용을 넣어 계획을 갱신하되 단기 수익률에 따라 매달 목표를 흔들지는 않습니다.</li>
+</ol>
+<p data-ke-size="size16">시장 하락 뒤 현재 잔액을 어떻게 해석해야 하는지는 <a href="https://tech-asset.tistory.com/116" target="_blank" rel="noopener noreferrer">손실 20%면 왜 25%를 벌어야 본전일까? 회복률 직접 계산하기</a>에서 원금&middot;현재 평가액&middot;추가 납입을 구분해 설명했습니다. 이번 계산기의 현재 투자금에도 &lsquo;처음 넣었던 돈&rsquo;이 아니라 계산하는 날 실제로 운용 중인 잔액을 넣는 것이 맞습니다.</p>
+<h2 data-ke-size="size26">자주 묻는 질문</h2>
+<h3 data-ke-size="size23">예상 연수익률에는 배당이나 분배금을 포함하나요?</h3>
+<p data-ke-size="size16">재투자한다고 가정한다면 총수익률에 포함해 입력할 수 있습니다. 현금으로 꺼내 쓸 계획이라면 목표금액을 키우는 수익으로 모두 잡으면 안 됩니다. 같은 수익을 비용 차감 전과 후에 중복 반영하지 않도록 기준을 통일하세요.</p>
+<h3 data-ke-size="size23">물가까지 고려하려면 어떻게 해야 하나요?</h3>
+<p data-ke-size="size16">가장 쉬운 방법은 목표금액 자체를 미래 물가만큼 높이는 것입니다. 또는 예상수익률에서 기대 물가상승률을 뺀 실질수익률로 별도 계산할 수 있지만, 두 방법을 동시에 사용하면 물가를 이중 반영하게 됩니다.</p>
+<h3 data-ke-size="size23">계산값을 그대로 자동이체하면 되나요?</h3>
+<p data-ke-size="size16">계산은 일정한 수익률과 중단 없는 납입을 가정합니다. 실제로는 수익률 변동, 세금, 비용, 납입 공백이 있으므로 원 단위 결과보다 조금 높게 잡고 비상자금과 생활비를 침해하지 않는 범위에서 정하는 편이 합리적입니다.</p>
+<h2 data-ke-size="size26">정석(定石)의 한 줄 평</h2>
+<div class="jeongseok-commentary" style="background: #f6f8fa; padding: 22px; border-radius: 10px; margin: 26px 0;">
+<p data-ke-size="size16">목표금액 계산에서 가장 위험한 입력값은 높은 수익률이 아니라, 높은 수익률을 &lsquo;확정된 미래&rsquo;처럼 취급하는 태도입니다. 수익률을 7%로 올리면 화면의 월 적립액은 즉시 줄지만 내가 통제할 수 있는 것은 시장수익률보다 납입액&middot;기간&middot;비용에 가깝습니다. 기준 시나리오는 계획을 세우는 데 쓰고, 낮은 수익률 시나리오는 계획이 흔들렸을 때 버틸 수 있는지 확인하는 데 쓰는 편이 좋습니다.</p>
+<p data-ke-size="size16">계산 결과가 부담스럽다면 목표를 포기하거나 위험을 크게 늘리는 두 선택지만 있는 것이 아닙니다. 목표 시점을 늦추고, 목표금액을 필수금액과 희망금액으로 나누고, 현재 지출에서 지속 가능한 납입액을 찾는 방법도 있습니다. 좋은 계산기는 미래를 맞히는 도구가 아니라, 어떤 가정이 내 계획을 움직이는지 드러내는 도구입니다.</p>
+</div>
+<h2 data-ke-size="size26">확인한 공식 자료</h2>
+<ul style="list-style-type: disc;" data-ke-list-type="disc">
+<li>미국 증권거래위원회 투자자 교육 사이트 Investor.gov, <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer">Compound Interest Calculator</a> &mdash; 초기 투자금&middot;월 납입액&middot;기간&middot;예상 연이율&middot;복리 주기 입력 구조, 2026년 10월 4일 확인.</li>
+<li>미국 증권거래위원회 투자자 교육 사이트 Investor.gov, <a href="https://www.investor.gov/introduction-investing/getting-started/understanding-fees" target="_blank" rel="noopener noreferrer">Understanding Fees</a> &mdash; 장기 투자에서 비용이 포트폴리오 가치에 미치는 영향, 2026년 10월 4일 확인.</li>
+</ul>
+<p style="font-size: 13px; color: #777; border-top: 1px solid #ddd; padding-top: 20px;" data-ke-size="size16">정보성 고지: 이 글과 계산기는 공개된 자료와 단순화한 수학적 가정을 바탕으로 만든 투자 공부용 콘텐츠이며 특정 종목이나 금융상품의 매수&middot;매도를 권유하지 않습니다. 계산 결과는 실제 수익, 세금 또는 목표 달성을 보장하지 않습니다.</p>
+</div>
