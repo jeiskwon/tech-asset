@@ -12,7 +12,7 @@
   }
 
 
-.tarot-start-guide{display:block;width:100%;height:100%;object-fit:contain}.tarot-start-visual{height:280px;margin:12px auto 18px}@media(max-width:520px){.tarot-start-visual{height:270px}}
+.tarot-start-guide{display:block;width:270px;max-width:100%;height:100%;object-fit:contain;border-radius:22px;margin:0 auto}.tarot-start-visual{height:280px;margin:12px auto 18px}@media(max-width:520px){.tarot-start-visual{height:270px}}
 </style>
 <script src="https://jeiskwon.github.io/playzip/saju/shared-result.js"></script>
 </head>
@@ -1837,7 +1837,7 @@ const THEME_CATEGORY = {
 
   const IMG = {
     cover: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/cover.webp",
-    guide: "https://jeiskwon.github.io/playzip/characters/tarot-guide-v1.webp",
+    guide: "https://jeiskwon.github.io/playzip/characters/tarot-moon-table-v1.webp",
     back: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/back-card_back.webp",
     frameResult: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/frame_result.webp",
     badgeResult: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/badge_result.webp",
@@ -2033,7 +2033,7 @@ const THEME_CATEGORY = {
         <div class="tarot-start-kicker">PLAYZIP TAROT</div>
         <div class="tarot-title">오늘, 어떤 카드가<br/>나를 기다릴까?</div>
         <div class="tarot-sub">78장의 카드 중 지금의 나에게 필요한<br/>메시지를 한 장씩 만나보세요.</div>
-        <div class="tarot-start-visual" aria-label="타로 안내자"><img class="tarot-start-guide" src="${IMG.guide}" alt="별빛을 펼치는 타로 안내자" /></div>
+        <div class="tarot-start-visual" aria-label="달빛 타로 테이블"><img class="tarot-start-guide" src="${IMG.guide}" alt="여자아이와 고양이가 수정구 앞에 있는 달빛 타로 테이블" /></div>
         <div class="tarot-start-features"><span>78장</span><span>정·역방향</span><span>1장 · 3장 · 켈틱</span></div>
         <input type="text" id="tarot-nickname-input" class="tarot-nickname-input" placeholder="이름/별명 (선택)" maxlength="10" />
         <button class="tarot-btn" id="tarot-start-btn">카드 뽑기</button>
