@@ -13,6 +13,17 @@
 
 
 .tarot-start-guide{display:block;width:270px;max-width:100%;height:100%;object-fit:contain;border-radius:22px;margin:0 auto}.tarot-start-visual{height:280px;margin:12px auto 18px}@media(max-width:520px){.tarot-start-visual{height:270px}}
+
+/* Illustrated content art; utility controls remain compact. */
+.tarot-option-card>img{width:82px;height:82px;object-fit:contain;display:block;margin:0 auto 10px}
+.tarot-option-card.spread-wide>img{width:94px;height:94px;object-fit:contain;margin:0;flex:0 0 94px}
+.tarot-celtic-art{position:relative;width:94px;height:104px;flex:0 0 94px;border-radius:16px;background:radial-gradient(ellipse,#5d3f75,#32203f);box-shadow:inset 0 0 0 1px #ba9b65}
+.tarot-celtic-art .celtic-card{position:absolute;width:16px;height:25px;object-fit:cover;border-radius:2px;margin:0;box-shadow:0 1px 2px #21142c}
+.celtic-1{left:28px;top:39px}.celtic-2{left:28px;top:39px;transform:rotate(90deg)}.celtic-3{left:28px;top:72px}.celtic-4{left:5px;top:39px}.celtic-5{left:28px;top:6px}.celtic-6{left:51px;top:39px}
+.tarot-celtic-art .celtic-7,.tarot-celtic-art .celtic-8,.tarot-celtic-art .celtic-9,.tarot-celtic-art .celtic-10{left:73px;width:13px;height:21px}
+.celtic-7{top:78px}.celtic-8{top:54px}.celtic-9{top:30px}.celtic-10{top:6px}
+.tarot-start-guide{border-radius:0!important}
+@media(max-width:370px){.tarot-option-card.spread-wide{gap:10px;padding:12px}.tarot-option-card.spread-wide>img{width:84px;height:94px;flex-basis:84px}}
 </style>
 <script src="https://jeiskwon.github.io/playzip/saju/shared-result.js"></script>
 </head>
@@ -1837,19 +1848,19 @@ const THEME_CATEGORY = {
 
   const IMG = {
     cover: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/cover.webp",
-    guide: "https://jeiskwon.github.io/playzip/characters/tarot-moon-table-v1.webp",
+    guide: "https://jeiskwon.github.io/playzip/illustrations/v1/home-transparent.webp",
     back: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/back-card_back.webp",
     frameResult: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/frame_result.webp",
     badgeResult: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/badge_result.webp",
     loading: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/loading.webp",
-    spreadOne: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/spread_one.webp",
-    spreadThree: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/spread_three.webp",
+    spreadOne: "https://jeiskwon.github.io/playzip/illustrations/v1/spread-one.webp",
+    spreadThree: "https://jeiskwon.github.io/playzip/illustrations/v1/spread-three.webp",
     spreadCeltic: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/spread_celtic.webp",
-    iconLove: "https://jeiskwon.github.io/playzip/icons/love.svg",
-    iconWealth: "https://jeiskwon.github.io/playzip/icons/wealth.svg",
-    iconJob: "https://jeiskwon.github.io/playzip/icons/job.svg",
-    iconHealth: "https://jeiskwon.github.io/playzip/icons/health.svg",
-    iconToday: "https://jeiskwon.github.io/playzip/icons/today.svg",
+    iconLove: "https://jeiskwon.github.io/playzip/illustrations/v1/love.webp",
+    iconWealth: "https://jeiskwon.github.io/playzip/illustrations/v1/wealth.webp",
+    iconJob: "https://jeiskwon.github.io/playzip/illustrations/v1/job.webp",
+    iconHealth: "https://jeiskwon.github.io/playzip/illustrations/v1/health.webp",
+    iconToday: "https://jeiskwon.github.io/playzip/illustrations/v1/today.webp",
     // 나BTI 리소스 재사용 (3종)
     bgPattern: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/bg-pattern2.webp",
     refreshIcon: "https://jeiskwon.github.io/playzip/icons/refresh.svg",
@@ -2095,7 +2106,7 @@ const THEME_CATEGORY = {
     const cardsHtml = SPREADS.map(s => `
       <div class="tarot-option-card spread-wide ${s.ready ? '' : 'locked'}" data-id="${s.id}">
         ${s.ready ? '' : '<span class="tarot-option-badge">준비중</span>'}
-        <img src="${s.icon}" alt="${s.label}" />
+        ${s.id === 'celtic' ? '<div class="tarot-celtic-art" role="img" aria-label="10장 켈틱 크로스 배치">'+Array.from({length:10},(_,i)=>'<img class="celtic-card celtic-'+(i+1)+'" src="'+IMG.back+'" alt="" />').join('')+'</div>' : '<img src="'+s.icon+'" alt="'+s.label+'" />'}
         <div>
           <div class="tarot-option-title">${s.label}</div>
           <div style="font-size:12px;color:#8a7fa8;margin-top:2px;">${s.desc}</div>
