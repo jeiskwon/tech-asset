@@ -2027,6 +2027,7 @@ const THEME_CATEGORY = {
   // 0. 시작 화면
   // ============================================================
   function renderStart() {
+    window.playzipShareCurrentResult = null;
     root.innerHTML = `
       <div class="tarot-card tarot-start-card">
         <div class="tarot-start-kicker">PLAYZIP TAROT</div>
@@ -2054,6 +2055,7 @@ const THEME_CATEGORY = {
   // 1. 카테고리 선택
   // ============================================================
   function renderCategory() {
+    window.playzipShareCurrentResult = null;
     const cardsHtml = CATEGORIES.map(c => `
       <div class="tarot-option-card ${c.ready ? '' : 'locked'}" data-id="${c.id}">
         ${c.ready ? '' : '<span class="tarot-option-badge">준비중</span>'}
@@ -2329,8 +2331,7 @@ const THEME_CATEGORY = {
     };
 
     const shareBtn = document.getElementById("tarot-share-btn");
-    if (shareBtn) {
-      shareBtn.onclick = () => {
+    const sendCurrentResult = () => {
         const resultUrl = buildResultUrl(state.nickname, state.category, state.spread, [{ card, reversed }]);
         shareToKakao({
           title: `${state.nickname}님의 ${catLabel} 카드는 [${card.name}] ${orientationLabel}`,
@@ -2338,8 +2339,9 @@ const THEME_CATEGORY = {
           imageUrl: card.img,
           link: resultUrl
         });
-      };
-    }
+    };
+    window.playzipShareCurrentResult = sendCurrentResult;
+    if (shareBtn) shareBtn.onclick = sendCurrentResult;
   }
 
   // ============================================================
@@ -2413,8 +2415,7 @@ const THEME_CATEGORY = {
     };
 
     const shareBtn = document.getElementById("tarot-share-btn");
-    if (shareBtn) {
-      shareBtn.onclick = () => {
+    const sendCurrentResult = () => {
         const resultUrl = buildResultUrl(state.nickname, state.category, state.spread, draws);
         const repIdx = getRepresentativeIndex(positions);
         const rep = draws[repIdx];
@@ -2424,8 +2425,9 @@ const THEME_CATEGORY = {
           imageUrl: rep.card.img,
           link: resultUrl
         });
-      };
-    }
+    };
+    window.playzipShareCurrentResult = sendCurrentResult;
+    if (shareBtn) shareBtn.onclick = sendCurrentResult;
   }
 
   const sharedResult = parseSharedResult();
